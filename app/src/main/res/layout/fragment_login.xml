@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.signIn.LoginFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="70dp"
+            android:text="@string/title_signIn"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/emailLoginTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:ems="10"
+            android:hint="@string/hint_email"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="@+id/textView3"
+            app:layout_constraintStart_toStartOf="@+id/textView3"
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+        <EditText
+            android:id="@+id/passwordLoginTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:hint="@string/hint_password"
+            android:inputType="textPassword"
+            app:layout_constraintEnd_toEndOf="@+id/emailLoginTxt"
+            app:layout_constraintStart_toStartOf="@+id/emailLoginTxt"
+            app:layout_constraintTop_toBottomOf="@+id/emailLoginTxt" />
+
+        <Button
+            android:id="@+id/signInBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/button_signin"
+            app:layout_constraintEnd_toEndOf="@+id/passwordLoginTxt"
+            app:layout_constraintStart_toStartOf="@+id/passwordLoginTxt"
+            app:layout_constraintTop_toBottomOf="@+id/passwordLoginTxt" />
+
+        <TextView
+            android:id="@+id/registerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/button_register"
+            android:textColor="#369FEF"
+            app:layout_constraintEnd_toEndOf="@+id/signInBtn"
+            app:layout_constraintStart_toStartOf="@+id/signInBtn"
+            app:layout_constraintTop_toBottomOf="@+id/signInBtn" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

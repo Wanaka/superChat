@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/createUserLoginFragment">
+    <fragment
+        android:id="@+id/createUserLoginFragment"
+        android:name="com.haag.superchat.ui.register.RegisterFragment"
+        android:label="fragment_create_user_login"
+        tools:layout="@layout/fragment_create_user_login" >
+        <action
+            android:id="@+id/action_createUserLoginFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_createUserLoginFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.haag.superchat.ui.chat.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" >
+        <action
+            android:id="@+id/action_chatFragment_to_createUserLoginFragment"
+            app:destination="@id/createUserLoginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.haag.superchat.ui.signIn.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_createUserLoginFragment"
+            app:destination="@id/createUserLoginFragment" />
+    </fragment>
+</navigation>
