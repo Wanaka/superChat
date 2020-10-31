@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.haag.superchat.MainActivity
 import com.haag.superchat.R
 import com.haag.superchat.model.User
 import com.haag.superchat.ui.chat.recyclerView.ChatAdapter
@@ -29,6 +30,7 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        (activity as MainActivity?)?.supportActionBar?.title = "Chats"
         setHasOptionsMenu(true)
         vm.getInstance() // base fragment?
     }
@@ -85,6 +87,10 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
         vm.addUserToFriendsList(user)
     }
 
+    override fun onItemChatClick(context: Context, user: User) {
+        vm.navigateTo(requireView(), R.id.action_chatFragment_to_detailChatFragment,user)
+    }
+
 
     // ---- Menu ---- //
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -126,9 +132,5 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
         })
 
         return super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onItemChatClick(context: Context, user: User) {
-        d(",,", "chatlist click: ${user.userName}")
     }
 }

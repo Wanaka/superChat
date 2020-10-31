@@ -11,6 +11,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import com.haag.superchat.model.Chat
 import com.haag.superchat.model.User
 import com.squareup.okhttp.Response
 import kotlinx.coroutines.tasks.await
@@ -74,6 +75,12 @@ class ChatsRepository @Inject constructor() {
         db.collection("users").document(getCurrentUser()?.uid.toString())
             .collection("friends")
             .document(user.id).set(user).await()
+    }
+
+    suspend fun addChatIdToFriend(user: User, chatId: Chat) {
+        db.collection("users").document(getCurrentUser()?.uid.toString())
+            .collection("friends")
+            .document(user.id).collection("chat").document(chatId.id).set(chatId).await()
     }
 
     fun signOut() {

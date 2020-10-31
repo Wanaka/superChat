@@ -1,5 +1,6 @@
 package com.haag.superchat.ui.chat
 
+import android.os.Bundle
 import android.util.Log
 import android.util.Log.d
 import android.view.View
@@ -8,11 +9,13 @@ import androidx.navigation.Navigation
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.firestore.DocumentSnapshot
 import com.haag.superchat.R
+import com.haag.superchat.model.Chat
 import com.haag.superchat.model.User
 import com.haag.superchat.repository.ChatsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
 
 
 class ChatViewModel constructor() : ViewModel() {
@@ -75,6 +78,7 @@ class ChatViewModel constructor() : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 repo.addUserToFriendsList(user)
+                repo.addChatIdToFriend(user, Chat(UUID.randomUUID().toString()))
             } catch (e: Exception) {
                 d(",,", "Exception: $e")
             }
@@ -100,6 +104,14 @@ class ChatViewModel constructor() : ViewModel() {
     private fun signOutUser(view: View) {
         Navigation.findNavController(view)
             .navigate(R.id.action_chatFragment_to_createUserLoginFragment)
+    }
+
+    fun navigateTo(view: View, fragmentId: Int, user: User) {
+        val bundle = Bundle()
+        bundle.putString("chatId", user.id)
+        bundle.putString("user", user.userName)
+        Navigation.findNavController(view)
+            .navigate(fragmentId, bundle)
     }
 
 
