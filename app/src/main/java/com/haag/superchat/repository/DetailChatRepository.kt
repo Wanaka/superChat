@@ -1,16 +1,18 @@
 package com.haag.superchat.repository
 
 import android.util.Log
-import android.util.Log.d
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.haag.superchat.model.Chat
 import com.haag.superchat.model.Message
 import com.haag.superchat.model.User
+import com.haag.superchat.util.currentDate
 import kotlinx.coroutines.tasks.await
-import java.util.*
 import javax.inject.Inject
 
 class DetailChatRepository @Inject constructor() {
@@ -23,11 +25,14 @@ class DetailChatRepository @Inject constructor() {
 
     fun getCurrentUser() = FirebaseAuth.getInstance().currentUser
 
-    fun getChat(chatId: String?): LiveData<List<User>> {
-        var friends = MutableLiveData<List<User>>()
-        var users = mutableListOf<User>()
+    suspend fun getUser(userId: String): DocumentSnapshot =
+        db.collection("users").document(userId).get().await()
 
-        db.collection("chats").document(chatId.toString()).collection("chat")
+    fun getChat(chatId: String): LiveData<List<Message>> {
+        var chatList = MutableLiveData<List<Message>>()
+        var messages = mutableListOf<Message>()
+
+        db.collection("chats").document(chatId).collection("chat")
             .addSnapshotListener { snapshot, e ->
                 if (e != null) {
                     Log.d(",,", "Listen failed.", e)
@@ -35,39 +40,41 @@ class DetailChatRepository @Inject constructor() {
                 }
 
                 if (snapshot != null) {
-
+                    messages.clear()
                     snapshot.documents.forEach {
-                        //save in correct format
-
-                        d(",,", "snapshot: ${it["message"]}")
+                        messages.add(Message(it["message"].toString(), it["userId"].toString()))
                     }
-//                    users.clear()
-
-//                    snapshot.documents.forEach {
-//                        users.add(
-//                            User(
-//                                it["userName"].toString(),
-//                                it["email"].toString(),
-//                                it["id"].toString()
-//                            )
-//                        )
-//                    }
-//
-//                    friends.value = users
+                    chatList.value = messages
                 } else {
                     Log.d(",,", "Current data: null")
                 }
-
             }
 
-        return friends
+        return chatList
     }
 
-    suspend fun sendMessage(message: Message, chatId: String) {
-
-        db.collection("chats").document(chatId)
+    suspend fun sendMessage(message: Message, chatId: Chat) {
+        db.collection("chats").document(chatId.id)
             .collection("chat")
-            .document(UUID.randomUUID().toString()).set(message).await()
+            .document(currentDate()).set(message).await()
     }
+
+    suspend fun addUserToFriendsList(user: User, friend: String) {
+        db.collection("users").document(friend)
+            .collection("friends")
+            .document(user.id).set(user).await()
+    }
+
+    suspend fun addChatIdToFriend(user: User, chatId: Chat, friend: String) {
+        db.collection("users").document(friend)
+            .collection("friends")
+            .document(user.id).collection("chat").document(friend).set(chatId).await()
+    }
+
+    suspend fun getChatId(userId: String, friend: String): QuerySnapshot =
+        db.collection("users").document(userId)
+            .collection("friends")
+            .document(friend).collection("chat").get().await()
+
 
 }

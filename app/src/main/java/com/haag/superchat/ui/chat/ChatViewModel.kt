@@ -28,22 +28,6 @@ class ChatViewModel constructor() : ViewModel() {
     fun getCurrentUser() = repo.getCurrentUser()
 
 
-//    fun getFriendsList(): LiveData<String> = liveData {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            var friendsList = MutableLiveData<String>()
-//            try {
-//
-//                var list = repo.getFriendsList(getCurrentUser()?.uid)
-////                d(",,", "vm list: ${list.value}")
-//
-//                emit(list.toString())
-//
-//            } catch (e: Exception) {
-//                d(",,", "Exception: $e")
-//            }
-//        }
-//    }
-
     fun getFriendsList(): LiveData<List<User>> {
         return repo.getFriendsList()
     }
@@ -108,7 +92,7 @@ class ChatViewModel constructor() : ViewModel() {
 
     fun navigateTo(view: View, fragmentId: Int, user: User) {
         val bundle = Bundle()
-        bundle.putString("chatId", user.id)
+        bundle.putString("friendId", user.id)
         bundle.putString("user", user.userName)
         Navigation.findNavController(view)
             .navigate(fragmentId, bundle)
