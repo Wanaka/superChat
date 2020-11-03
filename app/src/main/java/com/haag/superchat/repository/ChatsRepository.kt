@@ -1,5 +1,6 @@
 package com.haag.superchat.repository
 
+import android.util.Log
 import android.util.Log.d
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -65,7 +66,6 @@ class ChatsRepository @Inject constructor() {
                 } else {
                     d(",,", "Current data: null")
                 }
-
             }
 
         return friends

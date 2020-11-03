@@ -11,7 +11,7 @@ import com.google.firebase.ktx.Firebase
 import com.haag.superchat.model.Chat
 import com.haag.superchat.model.Message
 import com.haag.superchat.model.User
-import com.haag.superchat.util.currentDate
+import com.haag.superchat.util.getDateTime
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -44,6 +44,7 @@ class DetailChatRepository @Inject constructor() {
                     snapshot.documents.forEach {
                         messages.add(Message(it["message"].toString(), it["userId"].toString()))
                     }
+
                     chatList.value = messages
                 } else {
                     Log.d(",,", "Current data: null")
@@ -56,7 +57,7 @@ class DetailChatRepository @Inject constructor() {
     suspend fun sendMessage(message: Message, chatId: Chat) {
         db.collection("chats").document(chatId.id)
             .collection("chat")
-            .document(currentDate()).set(message).await()
+            .document(getDateTime()).set(message).await()
     }
 
     suspend fun addUserToFriendsList(user: User, friend: String) {
@@ -75,6 +76,4 @@ class DetailChatRepository @Inject constructor() {
         db.collection("users").document(userId)
             .collection("friends")
             .document(friend).collection("chat").get().await()
-
-
 }

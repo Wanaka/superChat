@@ -17,7 +17,9 @@ import kotlinx.android.synthetic.main.fragment_detail_chat.*
 
 
 class DetailChatFragment : Fragment() {
+
     private val vm: DetailChatViewModel by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,28 +38,37 @@ class DetailChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val friendId = arguments?.getString("friendId")
-        lateinit var chatId: Chat
 
+        getChatId(friendId)
+    }
+
+    private fun getChatId(friendId: String?) {
         vm.getChatId(friendId.toString()).observe(viewLifecycleOwner, Observer {
-           chatId = it
+            getChat(it)
+            sendMessage(friendId, it)
         })
+    }
 
-        vm.getChat(friendId.toString()).observe(viewLifecycleOwner, Observer {
+    private fun getChat(chatId: Chat) {
+        vm.getChat(chatId.id).observe(viewLifecycleOwner, Observer {
             chatAdapter(it)
         })
+    }
 
+    private fun sendMessage(friendId: String?, chatId: Chat) {
         sendMessageBtn.setOnClickListener {
             if (chatInput.text.isNotBlank()) {
                 vm.sendMessage(chatInput.text.toString(), chatId)
                 chatInput.text.clear()
 
+                //separate this part into its own function
                 vm.getUser(vm.getCurrentUser()?.uid.toString())
                     .observe(viewLifecycleOwner, Observer {
                         vm.addUserToFriendsList(it, chatId, friendId.toString())
                     })
+                ///////
             }
         }
-
     }
 
     private fun chatAdapter(chatMessages: List<Message>) {
@@ -70,9 +81,5 @@ class DetailChatFragment : Fragment() {
                 context
             )
         }
-    }
-
-    fun getMyOwnData() {
-
     }
 }

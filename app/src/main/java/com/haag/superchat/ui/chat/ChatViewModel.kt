@@ -51,7 +51,6 @@ class ChatViewModel constructor() : ViewModel() {
                         )
                     }
                 }
-
             } catch (e: Exception) {
                 d(",,", "Exception: $e")
             }
@@ -97,29 +96,4 @@ class ChatViewModel constructor() : ViewModel() {
         Navigation.findNavController(view)
             .navigate(fragmentId, bundle)
     }
-
-
-//    private fun updateOldList(oldList: String, newList: MutableList<String>) {
-//        var letters = ""
-//        for (i in oldList)
-//            letters += i
-//
-//        letters
-//            .drop(1)
-//            .dropLast(1)
-//            .split(",")
-//            .forEach {
-//                newList.add(it.replace("\\s".toRegex(), ""))
-//            }
-//    }
-
-//    private fun updateUser(
-//        currentUser: DocumentSnapshot?,
-//        list: MutableList<String>
-//    ): User =
-//        User(
-//            currentUser?.get("userName").toString(),
-//            currentUser?.get("email").toString(),
-//            currentUser?.get("id").toString()
-//        )
 }

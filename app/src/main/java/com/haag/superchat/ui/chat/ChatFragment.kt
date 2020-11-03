@@ -2,6 +2,7 @@ package com.haag.superchat.ui.chat
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.util.Log.d
 import android.util.Log.i
 import android.view.*
