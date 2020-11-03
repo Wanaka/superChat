@@ -7,12 +7,12 @@
 
     <View
         android:id="@+id/chatItemFriend"
-        android:layout_width="300dp"
+        android:layout_width="250dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:background="#CACACA"
+        android:background="@drawable/chat_item_friend_shape"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -21,13 +21,13 @@
         android:id="@+id/friendMessgeTxt"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/chatItemFriend"
         app:layout_constraintEnd_toEndOf="@+id/chatItemFriend"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/chatItemFriend"
+        app:layout_constraintTop_toTopOf="@+id/chatItemFriend" />
 </androidx.constraintlayout.widget.ConstraintLayout>

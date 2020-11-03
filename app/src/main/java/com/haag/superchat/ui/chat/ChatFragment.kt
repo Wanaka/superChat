@@ -2,11 +2,7 @@ package com.haag.superchat.ui.chat
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
-import android.util.Log.d
-import android.util.Log.i
 import android.view.*
-import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,10 +12,11 @@ import com.haag.superchat.MainActivity
 import com.haag.superchat.R
 import com.haag.superchat.model.User
 import com.haag.superchat.ui.chat.recyclerView.ChatAdapter
-import com.haag.superchat.ui.chat.recyclerView.ChatAdapter.*
+import com.haag.superchat.ui.chat.recyclerView.ChatAdapter.OnItemChatClickListener
 import com.haag.superchat.ui.chat.recyclerView.SearchAdapter
-import com.haag.superchat.ui.chat.recyclerView.SearchAdapter.*
+import com.haag.superchat.ui.chat.recyclerView.SearchAdapter.OnItemClickListener
 import com.haag.superchat.util.hideKeyBoard
+import com.haag.superchat.util.lineDivider
 import kotlinx.android.synthetic.main.fragment_chat.*
 
 
@@ -55,22 +52,13 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
         vm.userData.observe(viewLifecycleOwner, Observer {
             initSearchRv(it)
         })
-
-        signOutBtn.setOnClickListener {
-            vm.signOut(view)
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
     }
 
     private fun initChatRv(it: List<User>) {
         chatsRv.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = ChatAdapter(it, context, this@ChatFragment)
-        }
+        }.lineDivider()
     }
 
     private fun initSearchRv(it: User) {
@@ -79,7 +67,7 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
         searchRv.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = SearchAdapter(searchList, context, this@ChatFragment)
-        }
+        }.lineDivider()
     }
 
     override fun onItemClick(context: Context, user: User) {
@@ -89,7 +77,7 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
     }
 
     override fun onItemChatClick(context: Context, user: User) {
-        vm.navigateTo(requireView(), R.id.action_chatFragment_to_detailChatFragment,user)
+        vm.navigateTo(requireView(), R.id.action_chatFragment_to_detailChatFragment, user)
     }
 
 
@@ -98,6 +86,7 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
         inflater.inflate(R.menu.chat_menu, menu)
 
         var item = menu.findItem(R.id.chatSearch)
+
         var searchView: SearchView? = item.actionView as? SearchView
 
         item.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
@@ -133,5 +122,15 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
         })
 
         return super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.chatSignOut -> {
+                vm.signOut(requireView())
+            }
+        }
+
+        return true
     }
 }

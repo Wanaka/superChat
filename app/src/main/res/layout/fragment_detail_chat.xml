@@ -14,7 +14,7 @@
             android:id="@+id/view"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
-            android:background="#B3DAF8"
+            android:background="@color/gray_black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -25,8 +25,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:background="#FFFFFF"
+            android:background="@drawable/chat_input_shape"
             android:ems="10"
+            android:autoSizeTextType="uniform"
             android:hint="Enter Message"
             android:inputType="textPersonName"
             app:layout_constraintBottom_toBottomOf="@+id/view"
@@ -34,14 +35,17 @@
             app:layout_constraintStart_toStartOf="@+id/view"
             app:layout_constraintTop_toTopOf="@+id/view" />
 
-        <Button
+        <ImageButton
             android:id="@+id/sendMessageBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="Button"
+            android:background="@drawable/chat_send_button_shape"
+            android:gravity="bottom"
+            android:padding="10dp"
+            android:src="@drawable/ic_send"
             app:layout_constraintBottom_toBottomOf="@+id/view"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/view"
             app:layout_constraintTop_toTopOf="@+id/view" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -52,5 +56,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
