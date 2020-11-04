@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/createUserLoginFragment">
+    app:startDestination="@id/loadingFragment">
     <fragment
         android:id="@+id/createUserLoginFragment"
         android:name="com.haag.superchat.ui.register.RegisterFragment"
@@ -45,4 +45,13 @@
         android:name="com.haag.superchat.ui.detailChat.DetailChatFragment"
         android:label="fragment_detail_chat"
         tools:layout="@layout/fragment_detail_chat" />
+    <fragment
+        android:id="@+id/loadingFragment"
+        android:name="com.haag.superchat.ui.loadingPage.LoadingFragment"
+        android:label="fragment_loading"
+        tools:layout="@layout/fragment_loading" >
+        <action
+            android:id="@+id/action_loadingFragment_to_createUserLoginFragment"
+            app:destination="@id/createUserLoginFragment" />
+    </fragment>
 </navigation>

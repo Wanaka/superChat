@@ -1,7 +1,9 @@
 package com.haag.superchat.ui.detailChat
 
 import android.os.Bundle
+import android.util.Log.d
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -13,6 +15,7 @@ import com.haag.superchat.R
 import com.haag.superchat.model.Chat
 import com.haag.superchat.model.Message
 import com.haag.superchat.ui.detailChat.recyclerView.DetailChatAdapter
+import com.haag.superchat.util.setupActionToolBar
 import kotlinx.android.synthetic.main.fragment_detail_chat.*
 
 
@@ -23,8 +26,14 @@ class DetailChatFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (activity as MainActivity?)?.supportActionBar?.title = arguments?.getString("user")
+        setHasOptionsMenu(true)
         vm.getInstance() // base fragment?
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val user = arguments?.getString("user")
+        setupActionToolBar(user.toString(), activity)
     }
 
     override fun onCreateView(
@@ -81,5 +90,17 @@ class DetailChatFragment : Fragment() {
                 context
             )
         }
+    }
+
+
+    // Menu
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                requireActivity().onBackPressed()
+            }
+        }
+
+        return true
     }
 }

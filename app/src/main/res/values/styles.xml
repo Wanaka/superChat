@@ -13,4 +13,10 @@
         <item name="actionMenuTextColor">@android:color/white</item>
     </style>
 
+    <style name="RegisterSignInButton" parent="Widget.AppCompat.Button">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:background">@drawable/register_signin_button_shape</item>
+    </style>
+
+
 </resources>

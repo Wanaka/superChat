@@ -5,6 +5,7 @@
     <color name="colorAccent">#03DAC5</color>
     <color name="gray_light_smooth">#f0f0f0</color>
     <color name="green_light_smooth">#adf0cd</color>
+    <color name="green_light">#6ce4a6</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="bar_status_color">#41dc8c</color>

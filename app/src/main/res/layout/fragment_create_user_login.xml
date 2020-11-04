@@ -14,7 +14,7 @@
             android:id="@+id/goToSignInBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="40dp"
             android:text="@string/button_signIn"
             android:textColor="#369FEF"
             app:layout_constraintEnd_toEndOf="@+id/createBtn"
@@ -22,12 +22,14 @@
             app:layout_constraintTop_toBottomOf="@+id/createBtn" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/registerTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="70dp"
+            android:fontFamily="@font/halaney_font"
             android:text="@string/title_register"
-            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:textSize="40sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -40,9 +42,9 @@
             android:ems="10"
             android:hint="@string/hint_username"
             android:inputType="textPersonName"
-            app:layout_constraintEnd_toEndOf="@+id/textView"
-            app:layout_constraintStart_toStartOf="@+id/textView"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            app:layout_constraintEnd_toEndOf="@+id/registerTitle"
+            app:layout_constraintStart_toStartOf="@+id/registerTitle"
+            app:layout_constraintTop_toBottomOf="@+id/registerTitle" />
 
         <EditText
             android:id="@+id/emailTxt"
@@ -73,7 +75,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:background="@drawable/register_signin_button_shape"
             android:text="@string/button_create"
+            android:theme="@style/RegisterSignInButton"
             app:layout_constraintEnd_toEndOf="@+id/passwordTxt"
             app:layout_constraintStart_toStartOf="@+id/passwordTxt"
             app:layout_constraintTop_toBottomOf="@+id/passwordTxt" />

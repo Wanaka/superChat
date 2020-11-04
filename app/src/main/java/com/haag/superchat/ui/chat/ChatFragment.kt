@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +18,7 @@ import com.haag.superchat.ui.chat.recyclerView.SearchAdapter
 import com.haag.superchat.ui.chat.recyclerView.SearchAdapter.OnItemClickListener
 import com.haag.superchat.util.hideKeyBoard
 import com.haag.superchat.util.lineDivider
+import com.haag.superchat.util.setupActionToolBar
 import kotlinx.android.synthetic.main.fragment_chat.*
 
 
@@ -24,13 +26,17 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
 
     private val vm: ChatViewModel by viewModels()
     var searchList = ArrayList<User>()
-    var chatList = mutableListOf<User>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (activity as MainActivity?)?.supportActionBar?.title = "Chats"
         setHasOptionsMenu(true)
         vm.getInstance() // base fragment?
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setupActionToolBar(getString(R.string.chats), activity)
     }
 
     override fun onCreateView(
