@@ -5,7 +5,6 @@ import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.haag.superchat.MainActivity
@@ -18,17 +17,14 @@ class LoadingFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         object : CountDownTimer(1000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-            }
+            override fun onTick(millisUntilFinished: Long) {}
 
             override fun onFinish() {
                 Navigation.findNavController(requireView())
                     .navigate(R.id.action_loadingFragment_to_createUserLoginFragment)
                 (activity as MainActivity?)?.supportActionBar!!.show()
-
             }
         }.start()
-
     }
 
     override fun onResume() {

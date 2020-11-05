@@ -7,9 +7,9 @@ import android.view.View
 import androidx.lifecycle.*
 import androidx.navigation.Navigation
 import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.firestore.DocumentSnapshot
 import com.haag.superchat.R
 import com.haag.superchat.model.Chat
+import com.haag.superchat.model.Message
 import com.haag.superchat.model.User
 import com.haag.superchat.repository.ChatsRepository
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +23,7 @@ class ChatViewModel constructor() : ViewModel() {
 
     private val _userData = MutableLiveData<User>()
     val userData: LiveData<User> get() = _userData
+    private val getchatId = MutableLiveData<Chat>()
 
     fun getInstance() = repo.getInstance()
     fun getCurrentUser() = repo.getCurrentUser()
@@ -66,6 +67,28 @@ class ChatViewModel constructor() : ViewModel() {
                 d(",,", "Exception: $e")
             }
         }
+    }
+
+
+    fun getChatId(friend: String): LiveData<Chat> {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                var querySnapshot = repo.getChatId(getCurrentUser()?.uid.toString(), friend)
+
+                withContext(Dispatchers.Main) {
+                    getchatId.value = Chat(querySnapshot.documents[0]["id"].toString())
+                }
+
+            } catch (e: Exception) {
+                d(",,", "Exception: $e")
+            }
+        }
+
+        return getchatId
+    }
+
+    fun getLastMessage(chatId: String): LiveData<Message> {
+        return repo.getLastMessage(chatId)
     }
 
     fun signOut(view: View) {

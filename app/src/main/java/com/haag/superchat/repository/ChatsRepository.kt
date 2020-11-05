@@ -13,6 +13,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.haag.superchat.model.Chat
+import com.haag.superchat.model.Message
 import com.haag.superchat.model.User
 import com.squareup.okhttp.Response
 import kotlinx.coroutines.tasks.await
@@ -82,6 +83,33 @@ class ChatsRepository @Inject constructor() {
             .collection("friends")
             .document(user.id).collection("chat").document(chatId.id).set(chatId).await()
     }
+
+    fun getLastMessage(chatId: String): LiveData<Message> {
+        var message = MutableLiveData<Message>()
+
+        db.collection("chats").document(chatId).collection("chat")
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    d(",,", "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null) {
+                    message.value = Message(
+                        snapshot.documents.last()["message"].toString(),
+                        snapshot.documents.last()["userId"].toString()
+                    )
+                } else {
+                    d(",,", "Current data: null")
+                }
+            }
+        return message
+    }
+
+    suspend fun getChatId(userId: String, friend: String): QuerySnapshot =
+        db.collection("users").document(userId)
+            .collection("friends")
+            .document(friend).collection("chat").get().await()
 
     fun signOut() {
         mAuth.signOut()

@@ -18,12 +18,34 @@
         android:id="@+id/userNameChat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="16dp"
         android:text=" "
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/profileImg"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="User" />
+
+    <View
+        android:id="@+id/badge"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/badge_circle"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/chatListView"
+        app:layout_constraintEnd_toEndOf="@+id/chatListView"
+        tools:visibility = "visible"
+        app:layout_constraintTop_toTopOf="@+id/chatListView" />
+
+    <ImageView
+        android:id="@+id/profileImg"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/image_round"
+        app:layout_constraintBottom_toBottomOf="@+id/chatListView"
+        app:layout_constraintStart_toStartOf="@+id/chatListView"
+        app:layout_constraintTop_toTopOf="@+id/chatListView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
