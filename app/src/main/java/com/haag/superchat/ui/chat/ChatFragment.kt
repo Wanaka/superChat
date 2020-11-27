@@ -6,9 +6,12 @@ import android.os.Bundle
 import android.util.Log.d
 import android.view.*
 import android.widget.SearchView
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.haag.superchat.R
 import com.haag.superchat.model.Chat
@@ -35,6 +38,8 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
     lateinit var sharedPreference: SharedPreferences
     lateinit var editor: SharedPreferences.Editor
 
+    var backStackFromUser = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -59,14 +64,18 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        findNavController().currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<String>("result")
+            ?.observe(viewLifecycleOwner, Observer {
+
+                backStackFromUser = it
+            })
+
         vm.getFriendsList().observe(viewLifecycleOwner, Observer { it ->
             it.forEach {
-                d(",,", "getFriendsList}")
-
                 getChat(it.id)
-
             }
-
             initChatRv(it)
         })
 
@@ -91,78 +100,48 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
         }.lineDivider()
     }
 
-
-    // This is run twice, why??
     private fun getChat(friendId: String) {
         vm.getChatId(friendId).observe(viewLifecycleOwner, Observer {
             getLastMessage(it)
-            d(",,", "getChat}")
         })
     }
 
     private fun getLastMessage(chat: Chat) {
         vm.getLastMessage(chat.id).observe(viewLifecycleOwner, Observer {
-            d(",,", "getLastMessage}")
             checkForNewMessage(it)
         })
     }
 
     private fun checkForNewMessage(message: Message) {
-        d(",,", "checkForNewMessage id: ${UUID.randomUUID()}")
         if (vm.getCurrentUser()?.uid == message.userId) {
-            badge.visibility = View.INVISIBLE
             d(",,", "SAME USERID")
-
+            editor.putBoolean("${message.userId}+a", false).commit()
         } else {
-            if (sharedPreference?.getString("lastMessage", "") != message.message) {
-                d(",,", "Different user and not same message in shared pref")
-                badge.visibility = View.VISIBLE
-                editor?.remove("lastMessage")
-                editor?.putString("lastMessage", message.message)
-                editor?.commit()
-            } else  {
+            // HERE -> from below
+            if (sharedPreference?.getString(message.userId, "") != message.message) {
+                editor.putString(message.userId, message.message).commit()
+                editor.putBoolean("${message.userId}+a", true).commit()
 
-                /////
-                ////    IDEA!!! -> what if every time u come back here from other fragment, in resume u set sharedpref. to null or some value
-                /////   and then u check if it's that value like above and then maybe u can decide if badge should be shown or not.
-                /////
-                d(",,", "same message saved ®")
-//                badge.visibility = View.INVISIBLE
+                d(",,", "${message.userId} Different user and not same message in shared pref")
+            } else {
+
+                editor.putBoolean("${message.userId}+a", false).commit()
+
+                d(",,", " ${message.userId} same message saved")
             }
         }
 
-//        if (sharedPreference?.getString("lastMessage", "") != message.message) {
-//            editor?.remove("lastMessage")
-//            editor?.putString("lastMessage", message.message)
-//            editor?.commit()
-//            badge.visibility = View.VISIBLE
-//            d(",,", "saved new message: ${sharedPreference?.getString("lastMessage", "")}")
-//
-//        } else {
-//            badge.visibility = View.INVISIBLE
-//            d(",,", "The same: ${sharedPreference?.getString("lastMessage", "")}")
-//        }
-    }
+        // this part must work wth the if statement above (shared pref.)
+        if(backStackFromUser.isNotEmpty()){
+            d(",,", " backstack!:: ${backStackFromUser}")
 
-//    private fun checkForNewMessage(message: Message) {
-//        d(",,", "message from db: ${message.message}")
-//
-//        d(",,", "sharedPreference: ${sharedPreference?.getString("lastMessage", "")}")
-//
-////        badge.visibility = View.INVISIBLE
-//
-//        if (sharedPreference?.getString("lastMessage", "") != message.message) {
-//            editor?.remove("lastMessage")
-//            editor?.putString("lastMessage", message.message)
-//            editor?.commit()
-//            badge.visibility = View.VISIBLE
-//            d(",,", "saved new message: ${sharedPreference?.getString("lastMessage", "")}")
-//
-//        } else {
-//            badge.visibility = View.INVISIBLE
-//            d(",,", "The same: ${sharedPreference?.getString("lastMessage", "")}")
-//        }
-//    }
+            editor.putBoolean("${backStackFromUser}+a", false).commit()
+
+            backStackFromUser = ""
+        }
+
+        chatsRv.adapter?.notifyDataSetChanged()
+    }
 
 
     override fun onItemClick(context: Context, user: User) {

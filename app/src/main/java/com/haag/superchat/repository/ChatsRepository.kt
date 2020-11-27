@@ -4,18 +4,15 @@ import android.util.Log
 import android.util.Log.d
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.SignInMethodQueryResult
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.haag.superchat.model.Chat
 import com.haag.superchat.model.Message
 import com.haag.superchat.model.User
-import com.squareup.okhttp.Response
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -95,10 +92,17 @@ class ChatsRepository @Inject constructor() {
                 }
 
                 if (snapshot != null) {
-                    message.value = Message(
-                        snapshot.documents.last()["message"].toString(),
-                        snapshot.documents.last()["userId"].toString()
-                    )
+                    if (snapshot.documents.size == 0) {
+                        message.value = Message(
+                            "",
+                            ""
+                        )
+                    } else {
+                        message.value = Message(
+                            snapshot.documents.last()["message"].toString(),
+                            snapshot.documents.last()["userId"].toString()
+                        )
+                    }
                 } else {
                     d(",,", "Current data: null")
                 }
@@ -110,6 +114,7 @@ class ChatsRepository @Inject constructor() {
         db.collection("users").document(userId)
             .collection("friends")
             .document(friend).collection("chat").get().await()
+
 
     fun signOut() {
         mAuth.signOut()

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.haag.superchat.MainActivity
 import com.haag.superchat.R
@@ -97,7 +98,13 @@ class DetailChatFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                requireActivity().onBackPressed()
+                var result = arguments?.getString("friendId")
+
+                findNavController().previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.set("result", result)
+
+                findNavController().navigateUp()
             }
         }
 

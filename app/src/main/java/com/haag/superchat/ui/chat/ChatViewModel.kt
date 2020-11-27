@@ -23,7 +23,7 @@ class ChatViewModel constructor() : ViewModel() {
 
     private val _userData = MutableLiveData<User>()
     val userData: LiveData<User> get() = _userData
-    private val getchatId = MutableLiveData<Chat>()
+
 
     fun getInstance() = repo.getInstance()
     fun getCurrentUser() = repo.getCurrentUser()
@@ -71,8 +71,11 @@ class ChatViewModel constructor() : ViewModel() {
 
 
     fun getChatId(friend: String): LiveData<Chat> {
+        val getchatId = MutableLiveData<Chat>()
+
         viewModelScope.launch(Dispatchers.IO) {
             try {
+
                 var querySnapshot = repo.getChatId(getCurrentUser()?.uid.toString(), friend)
 
                 withContext(Dispatchers.Main) {

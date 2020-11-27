@@ -1,6 +1,8 @@
 package com.haag.superchat.ui.chat.recyclerView
 
 import android.content.Context
+import android.content.SharedPreferences
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +18,7 @@ class ChatAdapter(
     private val mListener: OnItemChatClickListener?
 ) :
     RecyclerView.Adapter<ChatViewHolder>() {
+    var sharedPreference = context?.getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)!!
 
     interface OnItemChatClickListener {
         fun onItemChatClick(context: Context, user: User)
@@ -36,7 +39,8 @@ class ChatAdapter(
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         val user: User = list[position]
-        holder.bind(user)
+
+        holder.bind(user, sharedPreference.getBoolean("${user.id}+a", false))
         holder.itemView.setOnClickListener {
             mListener!!.onItemChatClick(context, user)
         }
@@ -46,8 +50,16 @@ class ChatAdapter(
 
 class ChatViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private var userName = view.userNameChat
+    private var badge = view.badge
 
-    fun bind(user: User) {
+    fun bind(user: User, _badge: Boolean) {
         userName.text = user.userName
+
+        if (_badge) {
+            badge.visibility = View.VISIBLE
+        } else {
+            badge.visibility = View.INVISIBLE
+        }
+
     }
 }
