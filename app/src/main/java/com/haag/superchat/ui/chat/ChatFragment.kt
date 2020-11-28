@@ -102,47 +102,53 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
 
     private fun getChat(friendId: String) {
         vm.getChatId(friendId).observe(viewLifecycleOwner, Observer {
-            getLastMessage(it)
+            getLastMessage(it, friendId)
         })
     }
 
-    private fun getLastMessage(chat: Chat) {
+    private fun getLastMessage(chat: Chat, friendId: String) {
         vm.getLastMessage(chat.id).observe(viewLifecycleOwner, Observer {
-            checkForNewMessage(it)
+            checkForNewMessage(it, friendId)
         })
     }
 
-    private fun checkForNewMessage(message: Message) {
-        if (vm.getCurrentUser()?.uid == message.userId) {
-            d(",,", "SAME USERID")
-            editor.putBoolean("${message.userId}+a", false).commit()
-        } else {
-            // HERE -> from below
+
+    private fun checkForNewMessage(message: Message, friendId: String) {
+
+        if (friendId == message.userId) {
+            d(",,", "friend")
+
             if (sharedPreference?.getString(message.userId, "") != message.message) {
-                editor.putString(message.userId, message.message).commit()
-                editor.putBoolean("${message.userId}+a", true).commit()
+                d(",,", "new message")
 
-                d(",,", "${message.userId} Different user and not same message in shared pref")
+                if (backStackFromUser.isNotEmpty()) {
+                    d(",,", "backstaged")
+
+                    editor.putBoolean("${message.userId}+a", false).commit()
+                    editor.putString(message.userId, message.message).commit()
+                    backStackFromUser = ""
+                } else {
+                    editor.putBoolean("${message.userId}+a", true).commit()
+                    d(",,", "staying")
+                }
             } else {
+                d(",,", "same message")
 
-                editor.putBoolean("${message.userId}+a", false).commit()
-
-                d(",,", " ${message.userId} same message saved")
             }
-        }
+        } else if (vm.getCurrentUser()?.uid == message.userId) {
+            d(",,", "My message id")
 
-        // this part must work wth the if statement above (shared pref.)
-        if(backStackFromUser.isNotEmpty()){
-            d(",,", " backstack!:: ${backStackFromUser}")
-
-            editor.putBoolean("${backStackFromUser}+a", false).commit()
-
+            editor.putBoolean("${friendId}+a", false).commit()
+            editor.putString(friendId, message.message).commit()
             backStackFromUser = ""
+        } else {
+            editor.putBoolean("${friendId}+a", true).commit()
+            d(",,", "someone else")
+
         }
 
         chatsRv.adapter?.notifyDataSetChanged()
     }
-
 
     override fun onItemClick(context: Context, user: User) {
         searchRv.visibility = View.GONE

@@ -95,12 +95,14 @@ class ChatsRepository @Inject constructor() {
                     if (snapshot.documents.size == 0) {
                         message.value = Message(
                             "",
-                            ""
+                            "",
+                            Chat("")
                         )
                     } else {
                         message.value = Message(
                             snapshot.documents.last()["message"].toString(),
-                            snapshot.documents.last()["userId"].toString()
+                            snapshot.documents.last()["userId"].toString(),
+                            Chat(snapshot.documents.last()["chatId"].toString())
                         )
                     }
                 } else {

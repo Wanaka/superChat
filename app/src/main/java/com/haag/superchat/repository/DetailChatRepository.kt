@@ -42,7 +42,13 @@ class DetailChatRepository @Inject constructor() {
                 if (snapshot != null) {
                     messages.clear()
                     snapshot.documents.forEach {
-                        messages.add(Message(it["message"].toString(), it["userId"].toString()))
+                        messages.add(
+                            Message(
+                                it["message"].toString(),
+                                it["userId"].toString(),
+                                Chat(it["chatId"].toString())
+                            )
+                        )
                     }
 
                     chatList.value = messages
@@ -54,8 +60,8 @@ class DetailChatRepository @Inject constructor() {
         return chatList
     }
 
-    suspend fun sendMessage(message: Message, chatId: Chat) {
-        db.collection("chats").document(chatId.id)
+    suspend fun sendMessage(message: Message) {
+        db.collection("chats").document(message.chatId.id)
             .collection("chat")
             .document(getDateTime()).set(message).await()
     }

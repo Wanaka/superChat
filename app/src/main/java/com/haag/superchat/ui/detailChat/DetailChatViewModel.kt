@@ -51,7 +51,7 @@ class DetailChatViewModel constructor() : ViewModel() {
     fun sendMessage(message: String, chatId: Chat) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                repo.sendMessage(Message(message, getCurrentUser()?.uid.toString()), chatId)
+                repo.sendMessage(Message(message, getCurrentUser()?.uid.toString(), chatId))
             } catch (e: Exception) {
                 Log.d(",,", "Exception: $e")
             }

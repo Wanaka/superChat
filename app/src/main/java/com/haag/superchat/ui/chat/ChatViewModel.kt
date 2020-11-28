@@ -61,8 +61,9 @@ class ChatViewModel constructor() : ViewModel() {
     fun addUserToFriendsList(user: User) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                var id = UUID.randomUUID().toString()
                 repo.addUserToFriendsList(user)
-                repo.addChatIdToFriend(user, Chat(UUID.randomUUID().toString()))
+                repo.addChatIdToFriend(user, Chat(id))
             } catch (e: Exception) {
                 d(",,", "Exception: $e")
             }
