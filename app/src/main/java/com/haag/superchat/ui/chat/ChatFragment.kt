@@ -116,36 +116,39 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
     private fun checkForNewMessage(message: Message, friendId: String) {
 
         if (friendId == message.userId) {
-            d(",,", "friend")
+            d(",,", "friend: ${friendId}, msgUid: ${message.userId}")
 
             if (sharedPreference?.getString(message.userId, "") != message.message) {
-                d(",,", "new message")
+                d(",,", "new message: ${message.message}")
 
-                if (backStackFromUser.isNotEmpty()) {
-                    d(",,", "backstaged")
+                if (backStackFromUser == message.userId) {
+                    d(",,", "backStackFromUser id: ${backStackFromUser}")
+                    d(",,", "backstaged ::::: friend: ${friendId}, msgUid: ${message.userId}")
 
                     editor.putBoolean("${message.userId}+a", false).commit()
                     editor.putString(message.userId, message.message).commit()
                     backStackFromUser = ""
                 } else {
                     editor.putBoolean("${message.userId}+a", true).commit()
-                    d(",,", "staying")
+                    d(",,", "staying ::::: friend: ${friendId}, msgUid: ${message.userId} ")
                 }
             } else {
-                d(",,", "same message")
-
+                d(",,", "same message: ${message.message}")
+                d(",,", "backStackFromUser id: ${backStackFromUser}")
+//                backStackFromUser = "e"
             }
         } else if (vm.getCurrentUser()?.uid == message.userId) {
-            d(",,", "My message id")
+            d(",,", "My message id: ${message.message}")
 
             editor.putBoolean("${friendId}+a", false).commit()
             editor.putString(friendId, message.message).commit()
             backStackFromUser = ""
         } else {
             editor.putBoolean("${friendId}+a", true).commit()
-            d(",,", "someone else")
+            d(",,", "someone else: ${message.message}")
 
         }
+        d(",,", "_____________________________________")
 
         chatsRv.adapter?.notifyDataSetChanged()
     }

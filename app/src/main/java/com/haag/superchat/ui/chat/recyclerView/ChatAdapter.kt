@@ -3,6 +3,7 @@ package com.haag.superchat.ui.chat.recyclerView
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,6 +44,7 @@ class ChatAdapter(
         holder.bind(user, sharedPreference.getBoolean("${user.id}+a", false))
         holder.itemView.setOnClickListener {
             mListener!!.onItemChatClick(context, user)
+            d(",,", "list click userid: ${user.id}")
         }
     }
 }
