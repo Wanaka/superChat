@@ -11,14 +11,25 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import com.haag.superchat.MainActivity
 import com.haag.superchat.R
 import com.haag.superchat.model.Chat
 import com.haag.superchat.model.Message
+import com.haag.superchat.model.NotificationData
+import com.haag.superchat.model.PushNotification
+import com.haag.superchat.retrofit.RetrofitInstance
 import com.haag.superchat.ui.detailChat.recyclerView.DetailChatAdapter
 import com.haag.superchat.util.setupActionToolBar
+import com.squareup.okhttp.Dispatcher
 import kotlinx.android.synthetic.main.fragment_detail_chat.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
+const val TOPIC = "/topics/myTopic"
 
 class DetailChatFragment : Fragment() {
 
@@ -42,6 +53,8 @@ class DetailChatFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+
+
         return inflater.inflate(R.layout.fragment_detail_chat, container, false)
     }
 
@@ -51,6 +64,24 @@ class DetailChatFragment : Fragment() {
 
         getChatId(friendId)
     }
+
+
+    fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val response = RetrofitInstance.api.postNotification(notification)
+
+            if (response.isSuccessful) {
+                d(",,", "response: ${Gson().toJson(response)}")
+            } else {
+                d(",,", "response: ${response.errorBody().toString()}")
+
+            }
+
+        } catch (e: Exception) {
+            d(",,", "exeption: ${e.toString()}")
+        }
+    }
+
 
     private fun getChatId(friendId: String?) {
         vm.getChatId(friendId.toString()).observe(viewLifecycleOwner, Observer {
@@ -67,6 +98,7 @@ class DetailChatFragment : Fragment() {
 
     private fun sendMessage(friendId: String?, chatId: Chat) {
         sendMessageBtn.setOnClickListener {
+            testme()
             if (chatInput.text.isNotBlank()) {
                 vm.sendMessage(chatInput.text.toString(), chatId)
                 chatInput.text.clear()
@@ -79,6 +111,19 @@ class DetailChatFragment : Fragment() {
                 ///////
             }
         }
+    }
+
+    fun testme(){
+//        sendMessageBtn.setOnClickListener {
+            d(",,", "push send!!")
+
+            PushNotification(
+                NotificationData("Hello World", "I'm a message!"),
+                TOPIC
+            ).also {
+                sendNotification(it)
+            }
+//        }
     }
 
     private fun chatAdapter(chatMessages: List<Message>) {

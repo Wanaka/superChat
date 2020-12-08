@@ -139,7 +139,6 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
             }
         } else if (vm.getCurrentUser()?.uid == message.userId) {
             d(",,", "My message id: ${message.message}")
-
             editor.putBoolean("${friendId}+a", false).commit()
             editor.putString(friendId, message.message).commit()
             backStackFromUser = ""
@@ -150,6 +149,7 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
         }
         d(",,", "_____________________________________")
 
+        editor.putString("${friendId}+m", message.message).commit()
         chatsRv.adapter?.notifyDataSetChanged()
     }
 

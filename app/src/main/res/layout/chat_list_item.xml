@@ -21,10 +21,19 @@
         android:layout_marginStart="16dp"
         android:text=" "
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/lastMessageTxt"
         app:layout_constraintStart_toEndOf="@+id/profileImg"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/profileImg"
         tools:text="User" />
+
+    <TextView
+        android:id="@+id/lastMessageTxt"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="@+id/profileImg"
+        app:layout_constraintStart_toStartOf="@+id/userNameChat"
+        tools:visibility="visible" />
 
     <View
         android:id="@+id/badge"

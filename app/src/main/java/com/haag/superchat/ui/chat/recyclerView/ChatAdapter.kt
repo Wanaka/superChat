@@ -41,7 +41,11 @@ class ChatAdapter(
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         val user: User = list[position]
 
-        holder.bind(user, sharedPreference.getBoolean("${user.id}+a", false))
+        holder.bind(
+            user,
+            sharedPreference.getBoolean("${user.id}+a", false),
+            sharedPreference.getString("${user.id}+m", "").toString()
+        )
         holder.itemView.setOnClickListener {
             mListener!!.onItemChatClick(context, user)
             d(",,", "list click userid: ${user.id}")
@@ -52,10 +56,13 @@ class ChatAdapter(
 
 class ChatViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private var userName = view.userNameChat
+    private var lastMessageTxt = view.lastMessageTxt
     private var badge = view.badge
 
-    fun bind(user: User, _badge: Boolean) {
+    fun bind(user: User, _badge: Boolean, lastMessage: String) {
         userName.text = user.userName
+        lastMessageTxt.text = lastMessage
+
 
         if (_badge) {
             badge.visibility = View.VISIBLE
