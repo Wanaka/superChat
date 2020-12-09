@@ -19,6 +19,7 @@ import com.haag.superchat.MainActivity
 import com.haag.superchat.R
 import kotlin.random.Random
 
+private const val CHANNEL_ID = "channel"
 
 class FirebaseService : FirebaseMessagingService() {
 
@@ -42,7 +43,7 @@ class FirebaseService : FirebaseMessagingService() {
 
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             val pendingIntent = PendingIntent.getActivity(this, 0, intent, FLAG_ONE_SHOT)
-            val notification = NotificationCompat.Builder(this, EXTRA_NOTIFICATION_CHANNEL_ID)
+            val notification = NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle(message.data["title"])
                 .setContentText(message.data["message"])
                 .setSmallIcon(R.drawable.ic_extra)
@@ -68,7 +69,7 @@ class FirebaseService : FirebaseMessagingService() {
     fun createNotificationChannel(nm: NotificationManager) {
         val channelName = "channelName"
         val channel =
-            NotificationChannel(EXTRA_NOTIFICATION_CHANNEL_ID, channelName, IMPORTANCE_HIGH).apply {
+            NotificationChannel(CHANNEL_ID, channelName, IMPORTANCE_HIGH).apply {
                 description = "SuperChat Channel"
                 enableLights(true)
                 lightColor = Color.GREEN
@@ -79,6 +80,7 @@ class FirebaseService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
+        super.onNewToken(token)
         d(",,", "Refreshed token: $token")
 
     }

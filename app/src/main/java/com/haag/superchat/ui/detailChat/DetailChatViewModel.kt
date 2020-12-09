@@ -1,21 +1,16 @@
 package com.haag.superchat.ui.detailChat
 
-import android.util.Log
 import android.util.Log.d
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.haag.superchat.model.Chat
-import com.haag.superchat.model.Message
-import com.haag.superchat.model.User
+import com.google.gson.Gson
+import com.haag.superchat.model.*
 import com.haag.superchat.repository.DetailChatRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.time.Instant
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
+import com.haag.superchat.retrofit.RetrofitInstance
+import com.haag.superchat.util.FCMConstants
+import kotlinx.coroutines.*
 
 class DetailChatViewModel constructor() : ViewModel() {
     private val repo = DetailChatRepository()
@@ -48,15 +43,42 @@ class DetailChatViewModel constructor() : ViewModel() {
         return _userData
     }
 
-    fun sendMessage(message: String, chatId: Chat) {
+    fun sendMessage(message: String, chatId: Chat, friendId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 repo.sendMessage(Message(message, getCurrentUser()?.uid.toString(), chatId))
+
+                async {
+                    sendNotification(
+                        PushNotification(
+                            NotificationData("SuperChat", message),
+                            "${FCMConstants.TOPIC}/$friendId"
+                        )
+                    )
+                }
             } catch (e: Exception) {
-                Log.d(",,", "Exception: $e")
+                d(",,", "Exception: $e")
             }
         }
     }
+
+    private suspend fun sendNotification(notification: PushNotification) =
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // add to repo?
+                val response = RetrofitInstance.api.postNotification(notification)
+
+                if (response.isSuccessful) {
+                    d(",,", "response: ${Gson().toJson(response)}")
+                } else {
+                    d(",,", "response: ${response.errorBody().toString()}")
+
+                }
+
+            } catch (e: Exception) {
+                d(",,", "exeption: ${e.toString()}")
+            }
+        }
 
     fun addUserToFriendsList(user: User, chatId: Chat, friend: String) {
         viewModelScope.launch(Dispatchers.IO) {

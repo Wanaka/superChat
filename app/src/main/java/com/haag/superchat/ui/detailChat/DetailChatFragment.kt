@@ -11,25 +11,17 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.gson.Gson
-import com.haag.superchat.MainActivity
 import com.haag.superchat.R
 import com.haag.superchat.model.Chat
 import com.haag.superchat.model.Message
-import com.haag.superchat.model.NotificationData
-import com.haag.superchat.model.PushNotification
-import com.haag.superchat.retrofit.RetrofitInstance
 import com.haag.superchat.ui.detailChat.recyclerView.DetailChatAdapter
+import com.haag.superchat.util.FCMConstants
 import com.haag.superchat.util.setupActionToolBar
-import com.squareup.okhttp.Dispatcher
 import kotlinx.android.synthetic.main.fragment_detail_chat.*
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.InputStream
 
-const val TOPIC = "/topics/myTopic"
 
 class DetailChatFragment : Fragment() {
 
@@ -52,9 +44,6 @@ class DetailChatFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-
-
         return inflater.inflate(R.layout.fragment_detail_chat, container, false)
     }
 
@@ -62,29 +51,12 @@ class DetailChatFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val friendId = arguments?.getString("friendId")
 
-        getChatId(friendId)
+        getChatId(friendId.toString())
+//        readJson()
     }
 
-
-    fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
-        try {
-            val response = RetrofitInstance.api.postNotification(notification)
-
-            if (response.isSuccessful) {
-                d(",,", "response: ${Gson().toJson(response)}")
-            } else {
-                d(",,", "response: ${response.errorBody().toString()}")
-
-            }
-
-        } catch (e: Exception) {
-            d(",,", "exeption: ${e.toString()}")
-        }
-    }
-
-
-    private fun getChatId(friendId: String?) {
-        vm.getChatId(friendId.toString()).observe(viewLifecycleOwner, Observer {
+    private fun getChatId(friendId: String) {
+        vm.getChatId(friendId).observe(viewLifecycleOwner, Observer {
             getChat(it)
             sendMessage(friendId, it)
         })
@@ -94,36 +66,6 @@ class DetailChatFragment : Fragment() {
         vm.getChat(chatId.id).observe(viewLifecycleOwner, Observer {
             chatAdapter(it)
         })
-    }
-
-    private fun sendMessage(friendId: String?, chatId: Chat) {
-        sendMessageBtn.setOnClickListener {
-            testme()
-            if (chatInput.text.isNotBlank()) {
-                vm.sendMessage(chatInput.text.toString(), chatId)
-                chatInput.text.clear()
-
-                //separate this part into its own function
-                vm.getUser(vm.getCurrentUser()?.uid.toString())
-                    .observe(viewLifecycleOwner, Observer {
-                        vm.addUserToFriendsList(it, chatId, friendId.toString())
-                    })
-                ///////
-            }
-        }
-    }
-
-    fun testme(){
-//        sendMessageBtn.setOnClickListener {
-            d(",,", "push send!!")
-
-            PushNotification(
-                NotificationData("Hello World", "I'm a message!"),
-                TOPIC
-            ).also {
-                sendNotification(it)
-            }
-//        }
     }
 
     private fun chatAdapter(chatMessages: List<Message>) {
@@ -137,6 +79,43 @@ class DetailChatFragment : Fragment() {
             )
         }
     }
+
+    private fun sendMessage(friendId: String, chatId: Chat) {
+        sendMessageBtn.setOnClickListener {
+            if (chatInput.text.isNotBlank()) {
+                vm.sendMessage(chatInput.text.toString(), chatId, friendId)
+                addUserToFriendsList(friendId, chatId)
+                chatInput.text.clear()
+            }
+        }
+    }
+
+    // should only happen the first time a message is sent
+    private fun addUserToFriendsList(friendId: String, chatId: Chat) {
+        vm.getUser(vm.getCurrentUser()?.uid.toString())
+            .observe(viewLifecycleOwner, Observer {
+                vm.addUserToFriendsList(it, chatId, friendId)
+            })
+    }
+
+
+//    fun readJson(): String {
+//        var json: String?
+//        var jsonObject: JSONObject? = null
+//        try {
+//            val inputstream: InputStream? = context?.assets?.open(FCMConstants.SERVER_KEY)
+//            json = inputstream?.bufferedReader().use { it?.readText() }
+//
+//            jsonObject = JSONArray(json).getJSONObject(0)
+//            d(",,", "json::::: ${jsonObject.getString("server_key")}")
+//
+//        } catch (e: Exception) {
+//            d(",,", "Couldnt read Json")
+//
+//        }
+//
+//        return jsonObject?.getString("server_key").toString()
+//    }
 
 
     // Menu
