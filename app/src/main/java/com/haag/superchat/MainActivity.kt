@@ -10,7 +10,6 @@ import com.haag.superchat.util.FCMConstants
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_chat.*
 
-
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val vm: ChatViewModel by viewModels()

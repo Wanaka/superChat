@@ -12,12 +12,12 @@ import kotlinx.android.synthetic.main.search_list_item.view.*
 class SearchAdapter(
     private val list: List<User>,
     private val context: Context,
-    private val mListener: OnItemClickListener?
+    private val mListener: OnItemSearchClickListener?
 ) :
     RecyclerView.Adapter<SearchViewHolder>() {
 
-    interface OnItemClickListener {
-        fun onItemClick(context: Context, user: User)
+    interface OnItemSearchClickListener {
+        fun onItemSearchClick(context: Context, user: User)
     }
 
 
@@ -37,7 +37,7 @@ class SearchAdapter(
         val user: User = list[position]
         holder.bind(user)
         holder.itemView.setOnClickListener {
-            mListener!!.onItemClick(context, user)
+            mListener!!.onItemSearchClick(context, user)
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.haag.superchat.repository
 
-import android.util.Log
 import android.util.Log.d
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

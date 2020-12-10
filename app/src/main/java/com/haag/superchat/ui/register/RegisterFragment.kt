@@ -1,6 +1,5 @@
 package com.haag.superchat.ui.register
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,7 +15,6 @@ import kotlinx.android.synthetic.main.fragment_create_user_login.*
 class RegisterFragment : Fragment() {
 
     private val vm: RegisterViewModel by viewModels()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

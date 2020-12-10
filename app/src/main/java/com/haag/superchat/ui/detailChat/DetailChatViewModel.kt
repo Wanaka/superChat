@@ -39,7 +39,6 @@ class DetailChatViewModel constructor() : ViewModel() {
                 d(",,", "Exception: $e")
             }
         }
-
         return _userData
     }
 

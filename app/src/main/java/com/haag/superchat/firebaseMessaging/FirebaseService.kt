@@ -2,7 +2,6 @@ package com.haag.superchat.firebaseMessaging
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.NotificationManager.EXTRA_NOTIFICATION_CHANNEL_ID
 import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_ONE_SHOT
@@ -20,32 +19,30 @@ import com.haag.superchat.R
 import kotlin.random.Random
 
 private const val CHANNEL_ID = "channel"
+private const val CHANNEL_NAME = "channelName"
+private const val DESCRIPTION_NAME = "SuperChat Channel"
+private const val TITLE = "title"
+private const val MESSAGE = "message"
 
 class FirebaseService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
-        d(",,", "From: " + message.from)
 
-        // Check if message contains a data payload.
-        if (message.data.size > 0) {
-            d(",,", "Message data payload: " + message.data)
-
+        //TODO later create a separate notification class
+        if (message.data.isNotEmpty()) {
 
             var intent = Intent(this, MainActivity::class.java)
             val notificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val notificationID = Random.nextInt()
-
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                createNotificationChannel(notificationManager)
-            }
-
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+
+            checkBuildVersion(notificationManager)
+
             val pendingIntent = PendingIntent.getActivity(this, 0, intent, FLAG_ONE_SHOT)
             val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle(message.data["title"])
-                .setContentText(message.data["message"])
+                .setContentTitle(message.data[TITLE])
+                .setContentText(message.data[MESSAGE])
                 .setSmallIcon(R.drawable.ic_extra)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
@@ -53,36 +50,29 @@ class FirebaseService : FirebaseMessagingService() {
 
             notificationManager.notify(notificationID, notification)
         }
-
-        // Check if message contains a notification payload.
-        if (message.notification != null) {
-            d(",,", "Message Notification Body: " + message.notification!!.body)
-        }
+    }
 
 
-        message.notification?.let {
-            d(",,", "Message Notification Body: ${it.body}")
+    private fun checkBuildVersion(notificationManager: NotificationManager) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannel(notificationManager)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun createNotificationChannel(nm: NotificationManager) {
-        val channelName = "channelName"
+    fun createNotificationChannel(notificationManager: NotificationManager) {
         val channel =
-            NotificationChannel(CHANNEL_ID, channelName, IMPORTANCE_HIGH).apply {
-                description = "SuperChat Channel"
+            NotificationChannel(CHANNEL_ID, CHANNEL_NAME, IMPORTANCE_HIGH).apply {
+                description = DESCRIPTION_NAME
                 enableLights(true)
                 lightColor = Color.GREEN
             }
 
-        nm.createNotificationChannel(channel)
-
+        notificationManager.createNotificationChannel(channel)
     }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        d(",,", "Refreshed token: $token")
-
     }
 
 

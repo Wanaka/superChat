@@ -15,6 +15,7 @@ import com.haag.superchat.R
 import com.haag.superchat.model.Chat
 import com.haag.superchat.model.Message
 import com.haag.superchat.ui.detailChat.recyclerView.DetailChatAdapter
+import com.haag.superchat.util.Constants
 import com.haag.superchat.util.FCMConstants
 import com.haag.superchat.util.setupActionToolBar
 import kotlinx.android.synthetic.main.fragment_detail_chat.*
@@ -36,7 +37,7 @@ class DetailChatFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val user = arguments?.getString("user")
+        val user = arguments?.getString(Constants.USER)
         setupActionToolBar(user.toString(), activity)
     }
 
@@ -49,10 +50,9 @@ class DetailChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val friendId = arguments?.getString("friendId")
+        val friendId = arguments?.getString(Constants.FRIEND_ID)
 
         getChatId(friendId.toString())
-//        readJson()
     }
 
     private fun getChatId(friendId: String) {
@@ -98,35 +98,15 @@ class DetailChatFragment : Fragment() {
             })
     }
 
-
-//    fun readJson(): String {
-//        var json: String?
-//        var jsonObject: JSONObject? = null
-//        try {
-//            val inputstream: InputStream? = context?.assets?.open(FCMConstants.SERVER_KEY)
-//            json = inputstream?.bufferedReader().use { it?.readText() }
-//
-//            jsonObject = JSONArray(json).getJSONObject(0)
-//            d(",,", "json::::: ${jsonObject.getString("server_key")}")
-//
-//        } catch (e: Exception) {
-//            d(",,", "Couldnt read Json")
-//
-//        }
-//
-//        return jsonObject?.getString("server_key").toString()
-//    }
-
-
     // Menu
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                var result = arguments?.getString("friendId")
+                var result = arguments?.getString(Constants.FRIEND_ID)
 
                 findNavController().previousBackStackEntry
                     ?.savedStateHandle
-                    ?.set("result", result)
+                    ?.set(Constants.RESULT, result)
 
                 findNavController().navigateUp()
             }

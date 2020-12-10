@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.util.Log.d
 import android.view.*
 import android.widget.SearchView
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -20,32 +18,25 @@ import com.haag.superchat.model.User
 import com.haag.superchat.ui.chat.recyclerView.ChatAdapter
 import com.haag.superchat.ui.chat.recyclerView.ChatAdapter.OnItemChatClickListener
 import com.haag.superchat.ui.chat.recyclerView.SearchAdapter
-import com.haag.superchat.ui.chat.recyclerView.SearchAdapter.OnItemClickListener
-import com.haag.superchat.util.hideKeyBoard
-import com.haag.superchat.util.lineDivider
-import com.haag.superchat.util.setupActionToolBar
-import kotlinx.android.synthetic.main.chat_list_item.*
+import com.haag.superchat.ui.chat.recyclerView.SearchAdapter.OnItemSearchClickListener
+import com.haag.superchat.util.*
 import kotlinx.android.synthetic.main.fragment_chat.*
-import java.util.*
 import kotlin.collections.ArrayList
 
 
-class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
+class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListener {
 
     private val vm: ChatViewModel by viewModels()
     var searchList = ArrayList<User>()
-
     lateinit var sharedPreference: SharedPreferences
-    lateinit var editor: SharedPreferences.Editor
-
     var backStackFromUser = ""
+    private var userList: List<User>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         vm.getInstance() // base fragment?
         sharedPreference = context?.getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)!!
-        editor = sharedPreference?.edit()
     }
 
     override fun onResume() {
@@ -64,24 +55,17 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        findNavController().currentBackStackEntry
-            ?.savedStateHandle
-            ?.getLiveData<String>("result")
-            ?.observe(viewLifecycleOwner, Observer {
-
-                backStackFromUser = it
-            })
-
         vm.getFriendsList().observe(viewLifecycleOwner, Observer { it ->
-            it.forEach {
-                getChat(it.id)
-            }
+            userList = it
             initChatRv(it)
+            it.forEach { getChat(it.id) }
         })
 
         vm.userData.observe(viewLifecycleOwner, Observer {
             initSearchRv(it)
         })
+
+        latestBackStack()
     }
 
     private fun initChatRv(it: List<User>) {
@@ -112,57 +96,54 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
         })
     }
 
-
+    // move logic to VM
     private fun checkForNewMessage(message: Message, friendId: String) {
-
         if (friendId == message.userId) {
-            d(",,", "friend: ${friendId}, msgUid: ${message.userId}")
-
             if (sharedPreference?.getString(message.userId, "") != message.message) {
-                d(",,", "new message: ${message.message}")
-
                 if (backStackFromUser == message.userId) {
-                    d(",,", "backStackFromUser id: ${backStackFromUser}")
-                    d(",,", "backstaged ::::: friend: ${friendId}, msgUid: ${message.userId}")
-
-                    editor.putBoolean("${message.userId}+a", false).commit()
-                    editor.putString(message.userId, message.message).commit()
+                    sharedPreference.put(
+                        "${message.userId}+${Constants.SHARED_PREF_BOOLEAN}",
+                        false
+                    )
+                    sharedPreference.put(message.userId, message.message)
                     backStackFromUser = ""
                 } else {
-                    editor.putBoolean("${message.userId}+a", true).commit()
-                    d(",,", "staying ::::: friend: ${friendId}, msgUid: ${message.userId} ")
+                    sharedPreference.put("${message.userId}+${Constants.SHARED_PREF_BOOLEAN}", true)
                 }
-            } else {
-                d(",,", "same message: ${message.message}")
-                d(",,", "backStackFromUser id: ${backStackFromUser}")
-//                backStackFromUser = "e"
             }
         } else if (vm.getCurrentUser()?.uid == message.userId) {
-            d(",,", "My message id: ${message.message}")
-            editor.putBoolean("${friendId}+a", false).commit()
-            editor.putString(friendId, message.message).commit()
+            sharedPreference.put("${friendId}+${Constants.SHARED_PREF_BOOLEAN}", false)
+            sharedPreference.put("${friendId}+${Constants.SHARED_PREF_STRING}", message.message)
             backStackFromUser = ""
         } else {
-            editor.putBoolean("${friendId}+a", true).commit()
-            d(",,", "someone else: ${message.message}")
+            sharedPreference.put("${friendId}+${Constants.SHARED_PREF_BOOLEAN}", true)
 
         }
-        d(",,", "_____________________________________")
+        sharedPreference.put("${friendId}+${Constants.SHARED_PREF_STRING}", message.message)
 
-        editor.putString("${friendId}+m", message.message).commit()
         chatsRv.adapter?.notifyDataSetChanged()
     }
 
-    override fun onItemClick(context: Context, user: User) {
+    override fun onItemSearchClick(context: Context, user: User) {
+        vm.addUserToFriendsList(user, userList)
         searchRv.visibility = View.GONE
+        chatsRv.visibility = View.VISIBLE
+        searchList.clear()
         hideKeyBoard()
-        vm.addUserToFriendsList(user)
     }
 
     override fun onItemChatClick(context: Context, user: User) {
         vm.navigateTo(requireView(), R.id.action_chatFragment_to_detailChatFragment, user)
     }
 
+    private fun latestBackStack() {
+        findNavController().currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<String>(Constants.RESULT)
+            ?.observe(viewLifecycleOwner, Observer {
+                backStackFromUser = it
+            })
+    }
 
     // ---- Menu ---- //
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -175,12 +156,14 @@ class ChatFragment : Fragment(), OnItemClickListener, OnItemChatClickListener {
         item.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
                 searchRv.visibility = View.VISIBLE
-
+                chatsRv.visibility = View.GONE
                 return true
             }
 
             override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
                 searchRv.visibility = View.GONE
+                chatsRv.visibility = View.VISIBLE
+
                 searchList.clear()
                 searchView?.setQuery("", false)
                 hideKeyBoard()

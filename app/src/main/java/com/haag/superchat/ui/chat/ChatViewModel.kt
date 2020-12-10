@@ -1,21 +1,28 @@
 package com.haag.superchat.ui.chat
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.util.Log.d
 import android.view.View
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.EmailAuthProvider
 import com.haag.superchat.R
 import com.haag.superchat.model.Chat
 import com.haag.superchat.model.Message
 import com.haag.superchat.model.User
 import com.haag.superchat.repository.ChatsRepository
+import com.haag.superchat.util.Constants
+import com.haag.superchat.util.put
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
+import java.util.Observer
 
 
 class ChatViewModel constructor() : ViewModel() {
@@ -24,6 +31,7 @@ class ChatViewModel constructor() : ViewModel() {
     private val _userData = MutableLiveData<User>()
     val userData: LiveData<User> get() = _userData
 
+    var backStackFromUser = ""
 
     fun getInstance() = repo.getInstance()
     fun getCurrentUser() = repo.getCurrentUser()
@@ -58,7 +66,18 @@ class ChatViewModel constructor() : ViewModel() {
         }
     }
 
-    fun addUserToFriendsList(user: User) {
+    fun addUserToFriendsList(user: User, userList: List<User>?) {
+        var count = 0
+        userList?.iterator()?.forEach { i ->
+            when (i) {
+                user -> return
+                else -> count++
+            }
+        }
+        if (count == userList?.size) addUserToFriendsList(user)
+    }
+
+    private fun addUserToFriendsList(user: User) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 var id = UUID.randomUUID().toString()
@@ -95,6 +114,31 @@ class ChatViewModel constructor() : ViewModel() {
         return repo.getLastMessage(chatId)
     }
 
+//    fun checkForNewMessage(message: Message, friendId: String, sharedPreference: SharedPreferences){
+//        if (friendId == message.userId) {
+//            if (sharedPreference?.getString(message.userId, "") != message.message) {
+//                if (backStackFromUser == message.userId) {
+//                    sharedPreference.put(
+//                        "${message.userId}+${Constants.SHARED_PREF_BOOLEAN}",
+//                        false
+//                    )
+//                    sharedPreference.put(message.userId, message.message)
+//                    backStackFromUser = ""
+//                } else {
+//                    sharedPreference.put("${message.userId}+${Constants.SHARED_PREF_BOOLEAN}", true)
+//                }
+//            }
+//        } else if (getCurrentUser()?.uid == message.userId) {
+//            sharedPreference.put("${friendId}+${Constants.SHARED_PREF_BOOLEAN}", false)
+//            sharedPreference.put("${friendId}+${Constants.SHARED_PREF_STRING}", message.message)
+//            backStackFromUser = ""
+//        } else {
+//            sharedPreference.put("${friendId}+${Constants.SHARED_PREF_BOOLEAN}", true)
+//
+//        }
+//        sharedPreference.put("${friendId}+${Constants.SHARED_PREF_STRING}", message.message)
+//    }
+
     fun signOut(view: View) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -104,7 +148,7 @@ class ChatViewModel constructor() : ViewModel() {
                     signOutUser(view)
                 }
             } catch (e: Exception) {
-                Log.d(",,", "Exception: $e")
+                d(",,", "Exception: $e")
             }
         }
     }
@@ -118,8 +162,8 @@ class ChatViewModel constructor() : ViewModel() {
 
     fun navigateTo(view: View, fragmentId: Int, user: User) {
         val bundle = Bundle()
-        bundle.putString("friendId", user.id)
-        bundle.putString("user", user.userName)
+        bundle.putString(Constants.FRIEND_ID, user.id)
+        bundle.putString(Constants.USER, user.userName)
         Navigation.findNavController(view)
             .navigate(fragmentId, bundle)
     }

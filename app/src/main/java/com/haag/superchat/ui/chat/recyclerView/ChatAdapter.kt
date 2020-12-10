@@ -1,17 +1,15 @@
 package com.haag.superchat.ui.chat.recyclerView
 
 import android.content.Context
-import android.content.SharedPreferences
-import android.util.Log
-import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.haag.superchat.R
 import com.haag.superchat.model.User
+import com.haag.superchat.util.Constants
+import com.haag.superchat.util.get
 import kotlinx.android.synthetic.main.chat_list_item.view.*
-import kotlinx.android.synthetic.main.search_list_item.view.*
 
 class ChatAdapter(
     private val list: List<User>,
@@ -19,12 +17,12 @@ class ChatAdapter(
     private val mListener: OnItemChatClickListener?
 ) :
     RecyclerView.Adapter<ChatViewHolder>() {
+
     var sharedPreference = context?.getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)!!
 
     interface OnItemChatClickListener {
         fun onItemChatClick(context: Context, user: User)
     }
-
 
     override fun getItemCount(): Int = list.size
 
@@ -43,12 +41,11 @@ class ChatAdapter(
 
         holder.bind(
             user,
-            sharedPreference.getBoolean("${user.id}+a", false),
-            sharedPreference.getString("${user.id}+m", "").toString()
+            sharedPreference.get("${user.id}+${Constants.SHARED_PREF_BOOLEAN}", false),
+            sharedPreference.get("${user.id}+${Constants.SHARED_PREF_STRING}", "")
         )
         holder.itemView.setOnClickListener {
             mListener!!.onItemChatClick(context, user)
-            d(",,", "list click userid: ${user.id}")
         }
     }
 }
