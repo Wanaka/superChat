@@ -14,4 +14,5 @@
     <string name="title_signIn">Sign In</string>
     <string name="chats">Chats</string>
     <string name="superChat">SuperChat</string>
+    <string name="toast_adding_yourself_not_possible">You are trying to add yourself, which is not possible</string>
 </resources>

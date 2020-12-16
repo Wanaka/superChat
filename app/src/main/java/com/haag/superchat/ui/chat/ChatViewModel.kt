@@ -1,10 +1,12 @@
 package com.haag.superchat.ui.chat
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.util.Log.d
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import androidx.navigation.Navigation
@@ -18,6 +20,7 @@ import com.haag.superchat.model.User
 import com.haag.superchat.repository.ChatsRepository
 import com.haag.superchat.util.Constants
 import com.haag.superchat.util.put
+import com.haag.superchat.util.toaster
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -66,7 +69,14 @@ class ChatViewModel constructor() : ViewModel() {
         }
     }
 
-    fun addUserToFriendsList(user: User, userList: List<User>?) {
+    fun addUserToFriendsList(user: User, userList: List<User>?, context: Context) {
+        when (user.id) {
+            getCurrentUser()?.uid -> context.toaster(context.getString(R.string.toast_adding_yourself_not_possible))
+            else -> checkIfNewUser(user, userList)
+        }
+    }
+
+    private fun checkIfNewUser(user: User, userList: List<User>?) {
         var count = 0
         userList?.iterator()?.forEach { i ->
             when (i) {

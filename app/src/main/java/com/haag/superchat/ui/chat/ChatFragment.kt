@@ -125,7 +125,7 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
     }
 
     override fun onItemSearchClick(context: Context, user: User) {
-        vm.addUserToFriendsList(user, userList)
+        vm.addUserToFriendsList(user, userList, context)
         searchRv.visibility = View.GONE
         chatsRv.visibility = View.VISIBLE
         searchList.clear()

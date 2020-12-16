@@ -31,6 +31,8 @@ class FirebaseService : FirebaseMessagingService() {
         //TODO later create a separate notification class
         if (message.data.isNotEmpty()) {
 
+            d(",,", "firebasemesssage: ${message.from}")
+
             var intent = Intent(this, MainActivity::class.java)
             val notificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

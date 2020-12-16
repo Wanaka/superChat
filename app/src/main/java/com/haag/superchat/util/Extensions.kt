@@ -2,6 +2,7 @@ package com.haag.superchat.util
 
 import android.content.Context
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -51,3 +52,6 @@ fun setupActionToolBar(_title: String, activity: FragmentActivity?) {
     (activity)?.supportActionBar?.setDisplayHomeAsUpEnabled(bool)
     (activity)?.supportActionBar?.setDisplayShowHomeEnabled(bool)
 }
+
+fun Context.toaster(message: String) =
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
