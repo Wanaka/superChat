@@ -16,12 +16,9 @@ import com.haag.superchat.model.Chat
 import com.haag.superchat.model.Message
 import com.haag.superchat.ui.detailChat.recyclerView.DetailChatAdapter
 import com.haag.superchat.util.Constants
-import com.haag.superchat.util.FCMConstants
+import com.haag.superchat.util.hideKeyBoard
 import com.haag.superchat.util.setupActionToolBar
 import kotlinx.android.synthetic.main.fragment_detail_chat.*
-import org.json.JSONArray
-import org.json.JSONObject
-import java.io.InputStream
 
 
 class DetailChatFragment : Fragment() {
@@ -109,6 +106,7 @@ class DetailChatFragment : Fragment() {
                     ?.set(Constants.RESULT, result)
 
                 findNavController().navigateUp()
+                hideKeyBoard()
             }
         }
 
