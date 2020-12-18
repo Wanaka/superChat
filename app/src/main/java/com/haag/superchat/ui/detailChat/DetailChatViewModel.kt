@@ -25,13 +25,13 @@ class DetailChatViewModel constructor() : ViewModel() {
     fun getUser(userId: String): LiveData<User> {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                var user = repo.getUser(userId)
+                var user = async { repo.getUser(userId) }
 
                 withContext(Dispatchers.Main) {
                     _userData.value = User(
-                        user?.get("userName").toString(),
-                        user?.get("email").toString(),
-                        user?.get("id").toString()
+                        user?.await().get("userName").toString(),
+                        user?.await().get("email").toString(),
+                        user?.await().get("id").toString()
                     )
                 }
 
@@ -42,15 +42,26 @@ class DetailChatViewModel constructor() : ViewModel() {
         return _userData
     }
 
-    fun sendMessage(message: String, chatId: Chat, friendId: String) {
+    fun sendMessage(message: String, chatId: Chat, friendId: String, user: User) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                repo.sendMessage(Message(message, getCurrentUser()?.uid.toString(), chatId))
+                launch {
+                    repo.sendMessage(
+                        Message(
+                            message,
+                            getCurrentUser()?.uid.toString(),
+                            chatId
+                        )
+                    )
+                }
 
-                async {
+                launch {
                     sendNotification(
                         PushNotification(
-                            NotificationData("SuperChat", message),
+                            NotificationData(
+                                "SuperChat",
+                                "${user.userName}: $message"
+                            ),
                             "${FCMConstants.TOPIC}/$friendId"
                         )
                     )

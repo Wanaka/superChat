@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.haag.superchat.R
 import com.haag.superchat.model.Chat
 import com.haag.superchat.model.Message
+import com.haag.superchat.model.User
 import com.haag.superchat.ui.detailChat.recyclerView.DetailChatAdapter
 import com.haag.superchat.util.Constants
 import com.haag.superchat.util.hideKeyBoard
@@ -24,7 +25,7 @@ import kotlinx.android.synthetic.main.fragment_detail_chat.*
 class DetailChatFragment : Fragment() {
 
     private val vm: DetailChatViewModel by viewModels()
-
+    lateinit var user: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,8 +49,8 @@ class DetailChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val friendId = arguments?.getString(Constants.FRIEND_ID)
-
         getChatId(friendId.toString())
+        getUser()
     }
 
     private fun getChatId(friendId: String) {
@@ -57,6 +58,13 @@ class DetailChatFragment : Fragment() {
             getChat(it)
             sendMessage(friendId, it)
         })
+    }
+
+    private fun getUser() {
+        vm.getUser(vm.getCurrentUser()?.uid.toString())
+            .observe(viewLifecycleOwner, Observer {
+                user = it
+            })
     }
 
     private fun getChat(chatId: Chat) {
@@ -80,20 +88,13 @@ class DetailChatFragment : Fragment() {
     private fun sendMessage(friendId: String, chatId: Chat) {
         sendMessageBtn.setOnClickListener {
             if (chatInput.text.isNotBlank()) {
-                vm.sendMessage(chatInput.text.toString(), chatId, friendId)
-                addUserToFriendsList(friendId, chatId)
+                vm.sendMessage(chatInput.text.toString(), chatId, friendId, user)
+                vm.addUserToFriendsList(user, chatId, friendId)
                 chatInput.text.clear()
             }
         }
     }
 
-    // should only happen the first time a message is sent
-    private fun addUserToFriendsList(friendId: String, chatId: Chat) {
-        vm.getUser(vm.getCurrentUser()?.uid.toString())
-            .observe(viewLifecycleOwner, Observer {
-                vm.addUserToFriendsList(it, chatId, friendId)
-            })
-    }
 
     // Menu
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

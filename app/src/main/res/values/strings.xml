@@ -15,4 +15,6 @@
     <string name="chats">Chats</string>
     <string name="superChat">SuperChat</string>
     <string name="toast_adding_yourself_not_possible">You are trying to add yourself, which is not possible</string>
+    <string name="snack_internet_connected">Connection found</string>
+    <string name="snack_internet_not_connected">Internet connection lost</string>
 </resources>
