@@ -150,13 +150,17 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
         inflater.inflate(R.menu.chat_menu, menu)
 
         var item = menu.findItem(R.id.chatSearch)
-
         var searchView: SearchView? = item.actionView as? SearchView
+
+        searchView?.isFocusable = true
+        searchView?.isIconified = false
 
         item.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
                 searchRv.visibility = View.VISIBLE
                 chatsRv.visibility = View.GONE
+                showKeyBoard()
+
                 return true
             }
 
@@ -170,13 +174,14 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
 
                 return true
             }
+
         })
 
         searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(userEmail: String): Boolean {
                 searchRv.visibility = View.VISIBLE
                 searchView?.setQuery("", false)
-                vm.searchUserByEmail(userEmail)
+                vm.searchUserByEmail(userEmail.toLowerCase())
 
                 return true
             }

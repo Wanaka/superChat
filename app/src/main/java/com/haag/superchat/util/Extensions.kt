@@ -21,6 +21,12 @@ fun Fragment.hideKeyBoard() {
     imm.hideSoftInputFromWindow(requireView().windowToken, 0)
 }
 
+fun Fragment.showKeyBoard() {
+    val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.toggleSoftInputFromWindow(requireView().windowToken, InputMethodManager.SHOW_FORCED, 0)
+
+}
+
 fun getDateTime(): String = DateTimeFormatter
     .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
     .withZone(ZoneOffset.UTC)
