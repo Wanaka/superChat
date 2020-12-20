@@ -10,64 +10,81 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/signInTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="70dp"
-            android:fontFamily="@font/halaney_font"
-            android:text="@string/title_signIn"
-            android:textColor="@color/black"
-            android:textSize="40sp"
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
-            android:id="@+id/emailLoginTxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:ems="10"
-            android:hint="@string/hint_email"
-            android:inputType="textPersonName"
-            app:layout_constraintEnd_toEndOf="@+id/signInTitle"
-            app:layout_constraintStart_toStartOf="@+id/signInTitle"
-            app:layout_constraintTop_toBottomOf="@+id/signInTitle" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/passwordLoginTxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:ems="10"
-            android:hint="@string/hint_password"
-            android:inputType="textPassword"
-            app:layout_constraintEnd_toEndOf="@+id/emailLoginTxt"
-            app:layout_constraintStart_toStartOf="@+id/emailLoginTxt"
-            app:layout_constraintTop_toBottomOf="@+id/emailLoginTxt" />
+                <EditText
+                    android:id="@+id/passwordLoginTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:ems="10"
+                    android:hint="@string/hint_password"
+                    android:inputType="textPassword"
+                    app:layout_constraintEnd_toEndOf="@+id/emailLoginTxt"
+                    app:layout_constraintStart_toStartOf="@+id/emailLoginTxt"
+                    app:layout_constraintTop_toBottomOf="@+id/emailLoginTxt" />
 
-        <Button
-            android:id="@+id/signInBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/register_signin_button_shape"
-            android:text="@string/button_signin"
-            android:theme="@style/RegisterSignInButton"
-            app:layout_constraintEnd_toEndOf="@+id/passwordLoginTxt"
-            app:layout_constraintStart_toStartOf="@+id/passwordLoginTxt"
-            app:layout_constraintTop_toBottomOf="@+id/passwordLoginTxt" />
+                <Button
+                    android:id="@+id/signInBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/register_signin_button_shape"
+                    android:text="@string/button_signin"
+                    android:theme="@style/RegisterSignInButton"
+                    app:layout_constraintEnd_toEndOf="@+id/passwordLoginTxt"
+                    app:layout_constraintStart_toStartOf="@+id/passwordLoginTxt"
+                    app:layout_constraintTop_toBottomOf="@+id/passwordLoginTxt" />
 
-        <TextView
-            android:id="@+id/registerButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:text="@string/button_register"
-            android:textColor="#369FEF"
-            app:layout_constraintEnd_toEndOf="@+id/signInBtn"
-            app:layout_constraintStart_toStartOf="@+id/signInBtn"
-            app:layout_constraintTop_toBottomOf="@+id/signInBtn" />
+                <EditText
+                    android:id="@+id/emailLoginTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:ems="10"
+                    android:hint="@string/hint_email"
+                    android:inputType="textPersonName"
+                    app:layout_constraintEnd_toEndOf="@+id/signInTitle"
+                    app:layout_constraintStart_toStartOf="@+id/signInTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/signInTitle" />
+
+                <TextView
+                    android:id="@+id/signInTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="70dp"
+                    android:fontFamily="@font/halaney_font"
+                    android:text="@string/title_signIn"
+                    android:textColor="@color/black"
+                    android:textSize="40sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/registerButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="@string/button_register"
+                    android:textColor="#369FEF"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/signInBtn"
+                    app:layout_constraintStart_toStartOf="@+id/signInBtn"
+                    app:layout_constraintTop_toBottomOf="@+id/signInBtn" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

@@ -90,7 +90,6 @@ class DetailChatViewModel constructor() : ViewModel() {
                     d(",,", "response: ${Gson().toJson(response)}")
                 } else {
                     d(",,", "response: ${response.errorBody().toString()}")
-
                 }
 
             } catch (e: Exception) {
