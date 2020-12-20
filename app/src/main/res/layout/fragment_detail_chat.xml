@@ -29,11 +29,12 @@
             android:ems="10"
             android:autoSizeTextType="uniform"
             android:hint="Enter Message"
-            android:inputType="textPersonName"
+            android:inputType="textCapSentences"
             app:layout_constraintBottom_toBottomOf="@+id/view"
             app:layout_constraintEnd_toStartOf="@+id/sendMessageBtn"
             app:layout_constraintStart_toStartOf="@+id/view"
-            app:layout_constraintTop_toTopOf="@+id/view" />
+            app:layout_constraintTop_toTopOf="@+id/view"
+            />
 
         <ImageButton
             android:id="@+id/sendMessageBtn"
