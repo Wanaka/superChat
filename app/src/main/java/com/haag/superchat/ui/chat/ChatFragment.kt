@@ -3,7 +3,6 @@ package com.haag.superchat.ui.chat
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log.d
 import android.view.*
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -155,10 +154,12 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
         searchView?.isFocusable = true
         searchView?.isIconified = false
 
+
         item.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
                 searchRv.visibility = View.VISIBLE
                 chatsRv.visibility = View.GONE
+                searchList.clear()
                 showKeyBoard()
 
                 return true
@@ -167,9 +168,8 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
             override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
                 searchRv.visibility = View.GONE
                 chatsRv.visibility = View.VISIBLE
-
-                searchList.clear()
                 searchView?.setQuery("", false)
+                searchList.clear()
                 hideKeyBoard()
 
                 return true
@@ -181,12 +181,15 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
             override fun onQueryTextSubmit(userEmail: String): Boolean {
                 searchRv.visibility = View.VISIBLE
                 searchView?.setQuery("", false)
-                vm.searchUserByEmail(userEmail.toLowerCase())
+                vm.searchUserByEmail(userEmail.toLowerCase(), activity?.applicationContext)
+                searchList.clear()
 
                 return true
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
+                searchRv.visibility = View.VISIBLE
+
                 return false
             }
 

@@ -15,6 +15,9 @@
     <string name="chats">Chats</string>
     <string name="superChat">SuperChat</string>
     <string name="toast_adding_yourself_not_possible">You are trying to add yourself, which is not possible</string>
+    <string name="toast_user_exists">is already in your friend list</string>
+    <string name="toast_user_doesnt_exists">The email you entered doesn\'t exist</string>
+    <string name="toast_badly_formated">The email address is badly formatted</string>
     <string name="snack_internet_connected">Connection found</string>
     <string name="snack_internet_not_connected">Internet connection lost</string>
 </resources>

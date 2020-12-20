@@ -1,17 +1,12 @@
 package com.haag.superchat.ui.chat
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
+import android.provider.Settings.Global.getString
 import android.util.Log.d
 import android.view.View
-import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.NavHostFragment.findNavController
-import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.EmailAuthProvider
 import com.haag.superchat.R
 import com.haag.superchat.model.Chat
@@ -19,13 +14,11 @@ import com.haag.superchat.model.Message
 import com.haag.superchat.model.User
 import com.haag.superchat.repository.ChatsRepository
 import com.haag.superchat.util.Constants
-import com.haag.superchat.util.put
 import com.haag.superchat.util.toaster
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
-import java.util.Observer
 
 
 class ChatViewModel constructor() : ViewModel() {
@@ -44,7 +37,7 @@ class ChatViewModel constructor() : ViewModel() {
         return repo.getFriendsList()
     }
 
-    fun searchUserByEmail(userEmail: String) {
+    fun searchUserByEmail(userEmail: String, context: Context?) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val user = repo.searchUserByEmail(userEmail)
@@ -62,9 +55,16 @@ class ChatViewModel constructor() : ViewModel() {
                             user?.get("id").toString()
                         )
                     }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        context?.toaster(context.getString(R.string.toast_user_doesnt_exists))
+                    }
                 }
             } catch (e: Exception) {
                 d(",,", "Exception: $e")
+                withContext(Dispatchers.Main) {
+                    context?.toaster(context.getString(R.string.toast_badly_formated))
+                }
             }
         }
     }
@@ -72,15 +72,18 @@ class ChatViewModel constructor() : ViewModel() {
     fun addUserToFriendsList(user: User, userList: List<User>?, context: Context) {
         when (user.id) {
             getCurrentUser()?.uid -> context.toaster(context.getString(R.string.toast_adding_yourself_not_possible))
-            else -> checkIfNewUser(user, userList)
+            else -> checkIfNewUser(user, userList, context)
         }
     }
 
-    private fun checkIfNewUser(user: User, userList: List<User>?) {
+    private fun checkIfNewUser(user: User, userList: List<User>?, context: Context) {
         var count = 0
         userList?.iterator()?.forEach { i ->
             when (i) {
-                user -> return
+                user -> {
+                    context.toaster("${user.userName} ${context.getString(R.string.toast_user_exists)}")
+                    return
+                }
                 else -> count++
             }
         }
