@@ -15,6 +15,11 @@ class LoadingFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as MainActivity?)?.supportActionBar!!.hide()
 
         object : CountDownTimer(1000, 1000) {
             override fun onTick(millisUntilFinished: Long) {}
@@ -25,11 +30,6 @@ class LoadingFragment : Fragment() {
                 (activity as MainActivity?)?.supportActionBar!!.show()
             }
         }.start()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        (activity as MainActivity?)?.supportActionBar!!.hide()
     }
 
     override fun onCreateView(
