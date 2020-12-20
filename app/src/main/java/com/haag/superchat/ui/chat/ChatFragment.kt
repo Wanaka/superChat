@@ -188,8 +188,6 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                searchRv.visibility = View.VISIBLE
-
                 return false
             }
 
