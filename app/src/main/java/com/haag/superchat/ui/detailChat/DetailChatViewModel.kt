@@ -10,6 +10,7 @@ import com.haag.superchat.model.*
 import com.haag.superchat.repository.DetailChatRepository
 import com.haag.superchat.retrofit.RetrofitInstance
 import com.haag.superchat.util.FCMConstants
+import com.haag.superchat.util.messageNumber
 import kotlinx.coroutines.*
 
 class DetailChatViewModel constructor() : ViewModel() {
@@ -42,7 +43,13 @@ class DetailChatViewModel constructor() : ViewModel() {
         return _userData
     }
 
-    fun sendMessage(message: String, chatId: Chat, friendId: String, user: User) {
+    fun sendMessage(
+        message: String,
+        chatId: Chat,
+        friendId: String,
+        user: User,
+        msgNmbr: Int
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 launch {
@@ -51,7 +58,8 @@ class DetailChatViewModel constructor() : ViewModel() {
                             message,
                             getCurrentUser()?.uid.toString(),
                             chatId
-                        )
+                        ),
+                        messageNumber(msgNmbr)
                     )
                 }
 

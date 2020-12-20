@@ -60,10 +60,10 @@ class DetailChatRepository @Inject constructor() {
         return chatList
     }
 
-    suspend fun sendMessage(message: Message) {
+    suspend fun sendMessage(message: Message, messageNumber: String) {
         db.collection("chats").document(message.chatId.id)
             .collection("chat")
-            .document(getDateTime()).set(message).await()
+            .document(messageNumber).set(message).await()
     }
 
     suspend fun addUserToFriendsList(user: User, friend: String) {

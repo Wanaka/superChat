@@ -26,6 +26,7 @@ class DetailChatFragment : Fragment() {
 
     private val vm: DetailChatViewModel by viewModels()
     lateinit var user: User
+    private var friendId: String? = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,15 +49,14 @@ class DetailChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val friendId = arguments?.getString(Constants.FRIEND_ID)
-        getChatId(friendId.toString())
+        friendId = arguments?.getString(Constants.FRIEND_ID)
+        getChatId(friendId)
         getUser()
     }
 
-    private fun getChatId(friendId: String) {
-        vm.getChatId(friendId).observe(viewLifecycleOwner, Observer {
+    private fun getChatId(friendId: String?) {
+        vm.getChatId(friendId.toString()).observe(viewLifecycleOwner, Observer {
             getChat(it)
-            sendMessage(friendId, it)
         })
     }
 
@@ -70,6 +70,7 @@ class DetailChatFragment : Fragment() {
     private fun getChat(chatId: Chat) {
         vm.getChat(chatId.id).observe(viewLifecycleOwner, Observer {
             chatAdapter(it)
+            sendMessage(friendId, chatId, it.size)
         })
     }
 
@@ -85,11 +86,17 @@ class DetailChatFragment : Fragment() {
         }
     }
 
-    private fun sendMessage(friendId: String, chatId: Chat) {
+    private fun sendMessage(friendId: String?, chatId: Chat, msgNmbr: Int) {
         sendMessageBtn.setOnClickListener {
             if (chatInput.text.isNotBlank()) {
-                vm.sendMessage(chatInput.text.toString(), chatId, friendId, user)
-                vm.addUserToFriendsList(user, chatId, friendId)
+                vm.sendMessage(
+                    chatInput.text.toString(),
+                    chatId,
+                    friendId.toString(),
+                    user,
+                    msgNmbr
+                )
+                vm.addUserToFriendsList(user, chatId, friendId.toString())
                 chatInput.text.clear()
             }
         }

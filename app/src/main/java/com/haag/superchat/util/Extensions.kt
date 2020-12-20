@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.haag.superchat.MainActivity
 import com.haag.superchat.R
+import com.haag.superchat.model.Message
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -25,6 +26,17 @@ fun Fragment.showKeyBoard() {
     val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.toggleSoftInputFromWindow(requireView().windowToken, InputMethodManager.SHOW_FORCED, 0)
 
+}
+
+fun messageNumber(number: Int): String {
+    var size = number
+    return modifyNr(size++)
+}
+
+fun modifyNr(number: Int): String {
+    var newNumber = "${number}_${getDateTime()}"
+    if (number < 10) newNumber = "0$newNumber"
+    return newNumber
 }
 
 fun getDateTime(): String = DateTimeFormatter
