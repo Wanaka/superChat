@@ -75,7 +75,7 @@ fun setupActionToolBar(_title: String, activity: FragmentActivity?) {
 }
 
 fun Context.toaster(message: String) =
-    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 
 fun Context.showSnack(isConnected: Boolean, view: View) {
     var message: String
