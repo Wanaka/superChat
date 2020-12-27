@@ -11,6 +11,7 @@
         android:layout_height="match_parent">
 
         <ScrollView
+            android:id="@+id/scrollView3"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -69,7 +70,7 @@
                     android:layout_marginTop="16dp"
                     android:ems="10"
                     android:hint="@string/hint_email"
-                    android:inputType="textPersonName"
+                    android:inputType="textEmailAddress"
                     app:layout_constraintEnd_toEndOf="@+id/usernameTxt"
                     app:layout_constraintStart_toStartOf="@+id/usernameTxt"
                     app:layout_constraintTop_toBottomOf="@+id/usernameTxt" />
@@ -98,8 +99,21 @@
                     app:layout_constraintEnd_toEndOf="@+id/registerTitle"
                     app:layout_constraintStart_toStartOf="@+id/registerTitle"
                     app:layout_constraintTop_toBottomOf="@+id/registerTitle" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
+
+        <include
+            android:id="@+id/progressBarRegister"
+            layout="@layout/progressbar_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/scrollView3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/scrollView3"
+            app:layout_constraintTop_toTopOf="@+id/scrollView3"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

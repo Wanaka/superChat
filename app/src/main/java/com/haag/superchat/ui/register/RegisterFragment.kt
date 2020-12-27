@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import com.haag.superchat.R
 import com.haag.superchat.util.hideKeyBoard
 import com.haag.superchat.util.setupActionToolBar
+import com.haag.superchat.util.toaster
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_create_user_login.*
 
@@ -41,12 +42,7 @@ class RegisterFragment : Fragment() {
         ifUserIsLoggedInGoToChat(view)
 
         createBtn.setOnClickListener {
-            vm.createAccount(
-                usernameTxt.text.toString(),
-                emailTxt.text.toString(),
-                passwordTxt.text.toString(),
-                view
-            )
+            createAccount(view)
             hideKeyBoard()
         }
 
@@ -58,6 +54,19 @@ class RegisterFragment : Fragment() {
     private fun ifUserIsLoggedInGoToChat(view: View) {
         if (!vm.getCurrentUser()?.uid.isNullOrEmpty()) {
             vm.navigateTo(view, R.id.action_createUserLoginFragment_to_chatFragment)
+        }
+    }
+
+    private fun createAccount(view: View) {
+        if (usernameTxt.text.toString().isEmpty() || emailTxt.text.toString().isEmpty() || passwordTxt.text.toString().isEmpty()) {
+            context?.toaster(getString(R.string.toast_valid_email_password_needed))
+        } else {
+            vm.createAccount(
+                usernameTxt.text.toString(),
+                emailTxt.text.toString(),
+                passwordTxt.text.toString(),
+                view
+            )
         }
     }
 

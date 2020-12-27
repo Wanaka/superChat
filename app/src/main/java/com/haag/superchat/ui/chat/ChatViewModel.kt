@@ -62,8 +62,10 @@ class ChatViewModel constructor() : ViewModel() {
                 }
             } catch (e: Exception) {
                 d(",,", "Exception: $e")
+
+                var exception = e.message
                 withContext(Dispatchers.Main) {
-                    context?.toaster(context.getString(R.string.toast_badly_formated))
+                    context?.toaster("$exception")
                 }
             }
         }

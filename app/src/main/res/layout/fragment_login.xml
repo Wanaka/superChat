@@ -11,12 +11,15 @@
         android:layout_height="match_parent">
 
         <ScrollView
+            android:id="@+id/scrollView2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -33,18 +36,6 @@
                     app:layout_constraintEnd_toEndOf="@+id/emailLoginTxt"
                     app:layout_constraintStart_toStartOf="@+id/emailLoginTxt"
                     app:layout_constraintTop_toBottomOf="@+id/emailLoginTxt" />
-
-                <Button
-                    android:id="@+id/signInBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:background="@drawable/register_signin_button_shape"
-                    android:text="@string/button_signin"
-                    android:theme="@style/RegisterSignInButton"
-                    app:layout_constraintEnd_toEndOf="@+id/passwordLoginTxt"
-                    app:layout_constraintStart_toStartOf="@+id/passwordLoginTxt"
-                    app:layout_constraintTop_toBottomOf="@+id/passwordLoginTxt" />
 
                 <EditText
                     android:id="@+id/emailLoginTxt"
@@ -83,8 +74,34 @@
                     app:layout_constraintEnd_toEndOf="@+id/signInBtn"
                     app:layout_constraintStart_toStartOf="@+id/signInBtn"
                     app:layout_constraintTop_toBottomOf="@+id/signInBtn" />
+
+                <Button
+                    android:id="@+id/signInBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/register_signin_button_shape"
+                    android:text="@string/button_signin"
+                    android:theme="@style/RegisterSignInButton"
+                    app:layout_constraintEnd_toEndOf="@+id/passwordLoginTxt"
+                    app:layout_constraintStart_toStartOf="@+id/passwordLoginTxt"
+                    app:layout_constraintTop_toBottomOf="@+id/passwordLoginTxt" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 
+        <include
+            android:id="@+id/progressBarLogin"
+            layout="@layout/progressbar_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </FrameLayout>
