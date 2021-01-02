@@ -10,14 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <View
-            android:id="@+id/view"
-            android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:background="@color/gray_black"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chatRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/chatInput"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
             android:id="@+id/chatInput"
@@ -25,16 +26,16 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="10dp"
+            android:autoSizeTextType="uniform"
             android:background="@drawable/chat_input_shape"
             android:ems="10"
-            android:autoSizeTextType="uniform"
             android:hint="Enter Message"
-            android:inputType="textCapSentences"
-            app:layout_constraintBottom_toBottomOf="@+id/view"
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxLines="4"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/sendMessageBtn"
-            app:layout_constraintStart_toStartOf="@+id/view"
-            app:layout_constraintTop_toTopOf="@+id/view"
-            />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageButton
             android:id="@+id/sendMessageBtn"
@@ -45,18 +46,8 @@
             android:gravity="bottom"
             android:padding="10dp"
             android:src="@drawable/ic_send"
-            app:layout_constraintBottom_toBottomOf="@+id/view"
-            app:layout_constraintEnd_toEndOf="@+id/view"
-            app:layout_constraintTop_toTopOf="@+id/view" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/chatRecyclerView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@+id/chatInput"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

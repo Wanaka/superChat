@@ -16,6 +16,7 @@ import com.haag.superchat.repository.ChatsRepository
 import com.haag.superchat.util.Constants
 import com.haag.superchat.util.toaster
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -124,6 +125,7 @@ class ChatViewModel constructor() : ViewModel() {
 
         return getchatId
     }
+
 
     fun getLastMessage(chatId: String): LiveData<Message> {
         return repo.getLastMessage(chatId)

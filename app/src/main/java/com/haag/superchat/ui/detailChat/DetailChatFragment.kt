@@ -1,7 +1,6 @@
 package com.haag.superchat.ui.detailChat
 
 import android.os.Bundle
-import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -51,7 +50,7 @@ class DetailChatFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         friendId = arguments?.getString(Constants.FRIEND_ID)
         getChatId(friendId)
-        getUser()
+        getCurrentUser()
     }
 
     private fun getChatId(friendId: String?) {
@@ -60,7 +59,7 @@ class DetailChatFragment : Fragment() {
         })
     }
 
-    private fun getUser() {
+    private fun getCurrentUser() {
         vm.getUser(vm.getCurrentUser()?.uid.toString())
             .observe(viewLifecycleOwner, Observer {
                 user = it

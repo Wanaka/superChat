@@ -1,6 +1,7 @@
 package com.haag.superchat.util
 
 import android.content.Context
+import android.text.TextUtils.replace
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -97,3 +98,8 @@ fun Context.showSnack(isConnected: Boolean, view: View) {
     snack.view.setBackgroundColor(color)
     snack.show()
 }
+
+//fun removeLineBreak(){
+//
+//    replace("\n", "")
+//}

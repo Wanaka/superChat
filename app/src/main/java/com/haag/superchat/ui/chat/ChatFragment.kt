@@ -162,6 +162,11 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
         }
         d(",,", "outside if-statemets")
 
+        if (message.message.isEmpty()) {
+            d(",,", "NO MESSAGE SEND!!!")
+            sharedPreference.put("${friendId}+${Constants.SHARED_PREF_BOOLEAN}", false)
+        }
+
         //sparar  ord till till RV
         sharedPreference.put("${friendId}+${Constants.SHARED_PREF_STRING}", message.message)
 

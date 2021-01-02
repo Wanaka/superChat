@@ -1,6 +1,7 @@
 package com.haag.superchat.ui.chat.recyclerView
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,7 +59,9 @@ class ChatViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun bind(user: User, _badge: Boolean, lastMessage: String) {
         userName.text = user.userName
-        lastMessageTxt.text = lastMessage
+        lastMessageTxt.text =
+            if (lastMessage.length > 30) "${lastMessage.replace("\n", " ")
+                .take(37)}..." else lastMessage.replace("\n", " ")
 
 
         if (_badge) {

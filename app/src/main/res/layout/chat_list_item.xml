@@ -28,10 +28,12 @@
 
     <TextView
         android:id="@+id/lastMessageTxt"
-        android:layout_width="200dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
         android:textSize="11sp"
         app:layout_constraintBottom_toBottomOf="@+id/profileImg"
+        app:layout_constraintEnd_toStartOf="@+id/badge"
         app:layout_constraintStart_toStartOf="@+id/userNameChat"
         tools:visibility="visible" />
 
