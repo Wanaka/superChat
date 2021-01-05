@@ -2,6 +2,7 @@ package com.haag.superchat.util
 
 import android.content.Context
 import android.text.TextUtils.replace
+import android.util.Log.d
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -35,9 +36,16 @@ fun messageNumber(number: Int): String {
 }
 
 fun modifyNr(number: Int): String {
-    var newNumber = "${number}_${getDateTime()}"
-    if (number < 10) newNumber = "0$newNumber"
-    return newNumber
+    return (if ((number / 10).toString().dropLast(1).isEmpty())
+        if (number < 10) "00_0${number}_${getDateTime()}"
+        else "00_${number}_${getDateTime()}"
+    else {
+        if ((number / 10).toString().dropLast(1).toInt() < 10) {
+            "0${((number / 10)).toString().dropLast(1)}_${number}_${getDateTime()}"
+        } else {
+            "${((number / 10)).toString().dropLast(1)}_${number}_${getDateTime()}"
+        }
+    }).toString()
 }
 
 fun getDateTime(): String = DateTimeFormatter
