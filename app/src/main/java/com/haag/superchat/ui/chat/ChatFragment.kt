@@ -187,12 +187,18 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
     }
 
     private fun latestBackStack() {
+        storeCurrentFriendChatIdForNotificationsReference("")
+
         findNavController().currentBackStackEntry
             ?.savedStateHandle
             ?.getLiveData<String>(Constants.RESULT)
             ?.observe(viewLifecycleOwner, Observer {
                 backStackFromUser = it
             })
+    }
+
+    private fun storeCurrentFriendChatIdForNotificationsReference(id: String?) {
+        sharedPreference.put("currentChatUserId", id)
     }
 
     // ---- Menu ---- //

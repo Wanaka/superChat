@@ -65,10 +65,14 @@ class DetailChatViewModel @ViewModelInject constructor(
                 }
 
                 launch {
+
+                    d(",,", "firebasemesssage--friendId: $friendId")
+                    d(",,", "firebasemesssage--sender: ${getCurrentUser()?.uid.toString()}")
+
                     sendNotification(
                         PushNotification(
                             NotificationData(
-                                "SuperChat",
+                                user.id,
                                 "${user.userName}: $message"
                             ),
                             "${FCMConstants.TOPIC}/$friendId"

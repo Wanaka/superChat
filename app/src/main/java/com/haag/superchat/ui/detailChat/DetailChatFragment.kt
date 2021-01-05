@@ -1,6 +1,9 @@
 package com.haag.superchat.ui.detailChat
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -17,6 +20,7 @@ import com.haag.superchat.model.User
 import com.haag.superchat.ui.detailChat.recyclerView.DetailChatAdapter
 import com.haag.superchat.util.Constants
 import com.haag.superchat.util.hideKeyBoard
+import com.haag.superchat.util.put
 import com.haag.superchat.util.setupActionToolBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_detail_chat.*
@@ -27,16 +31,24 @@ class DetailChatFragment : Fragment() {
     private val vm: DetailChatViewModel by viewModels()
     lateinit var user: User
     private var friendId: String? = ""
+    lateinit var sharedPreference: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        sharedPreference = context?.getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)!!
     }
 
     override fun onResume() {
         super.onResume()
         val user = arguments?.getString(Constants.USER)
+        storeCurrentFriendChatIdForNotificationsReference(friendId)
         setupActionToolBar(user.toString(), activity)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        storeCurrentFriendChatIdForNotificationsReference("")
     }
 
     override fun onCreateView(
@@ -51,6 +63,10 @@ class DetailChatFragment : Fragment() {
         friendId = arguments?.getString(Constants.FRIEND_ID)
         getChatId(friendId)
         getCurrentUser()
+    }
+
+    private fun storeCurrentFriendChatIdForNotificationsReference(id: String?) {
+        sharedPreference.put("currentChatUserId", id)
     }
 
     private fun getChatId(friendId: String?) {
