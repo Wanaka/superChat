@@ -1,26 +1,27 @@
 package com.haag.superchat.ui.detailChat
 
 import android.util.Log.d
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
 import com.haag.superchat.model.*
 import com.haag.superchat.repository.DetailChatRepository
-import com.haag.superchat.retrofit.RetrofitInstance
+import com.haag.superchat.repository.NotificationRepository
 import com.haag.superchat.util.FCMConstants
 import com.haag.superchat.util.messageNumber
 import kotlinx.coroutines.*
 
-class DetailChatViewModel constructor() : ViewModel() {
-    private val repo = DetailChatRepository()
+class DetailChatViewModel @ViewModelInject constructor(
+    private val repo: DetailChatRepository,
+    private val notificationRepo: NotificationRepository
+) : ViewModel() {
 
     private val _userData = MutableLiveData<User>()
     private val getchatId = MutableLiveData<Chat>()
 
 
-    fun getInstance() = repo.getInstance()
     fun getCurrentUser() = repo.getCurrentUser()
 
     fun getUser(userId: String): LiveData<User> {
@@ -81,19 +82,18 @@ class DetailChatViewModel constructor() : ViewModel() {
     }
 
     private suspend fun sendNotification(notification: PushNotification) =
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch {
             try {
-                // add to repo?
-                val response = RetrofitInstance.api.postNotification(notification)
+                val t = async { notificationRepo.post(notification) }
 
-                if (response.isSuccessful) {
-                    d(",,", "response: ${Gson().toJson(response)}")
+                if (t.await().isSuccessful) {
+                    d(",,", "response: completed ${t.getCompleted()}")
                 } else {
-                    d(",,", "response: ${response.errorBody().toString()}")
+                    d(",,", "response: cancelled ${t.isCancelled}")
                 }
 
             } catch (e: Exception) {
-                d(",,", "exeption: ${e.toString()}")
+                d(",,", "exeption: ${e}")
             }
         }
 

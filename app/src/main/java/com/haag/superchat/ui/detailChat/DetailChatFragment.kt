@@ -18,9 +18,10 @@ import com.haag.superchat.ui.detailChat.recyclerView.DetailChatAdapter
 import com.haag.superchat.util.Constants
 import com.haag.superchat.util.hideKeyBoard
 import com.haag.superchat.util.setupActionToolBar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_detail_chat.*
 
-
+@AndroidEntryPoint
 class DetailChatFragment : Fragment() {
 
     private val vm: DetailChatViewModel by viewModels()
@@ -30,7 +31,6 @@ class DetailChatFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        vm.getInstance() // base fragment?
     }
 
     override fun onResume() {

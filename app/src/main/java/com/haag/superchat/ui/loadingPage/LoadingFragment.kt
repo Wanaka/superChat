@@ -9,8 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.haag.superchat.MainActivity
 import com.haag.superchat.R
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class LoadingFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

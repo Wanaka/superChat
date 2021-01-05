@@ -7,21 +7,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.Navigation
 import com.haag.superchat.R
-import com.haag.superchat.model.Chat
 import com.haag.superchat.model.User
 import com.haag.superchat.model.UserEmailUid
 import com.haag.superchat.repository.RegisterRepository
 import com.haag.superchat.util.toaster
 import kotlinx.android.synthetic.main.fragment_create_user_login.view.*
-import kotlinx.android.synthetic.main.fragment_login.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class RegisterViewModel @ViewModelInject constructor(private val repo: RegisterRepository) :
     ViewModel() {
-
-    fun getInstance() = repo.getInstance()
 
     fun getCurrentUser() = repo.getCurrentUser()
 

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.provider.Settings.Global.getString
 import android.util.Log.d
 import android.view.View
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.navigation.Navigation
 import com.google.firebase.auth.EmailAuthProvider
@@ -13,6 +14,7 @@ import com.haag.superchat.model.Chat
 import com.haag.superchat.model.Message
 import com.haag.superchat.model.User
 import com.haag.superchat.repository.ChatsRepository
+import com.haag.superchat.repository.LoginRepository
 import com.haag.superchat.util.Constants
 import com.haag.superchat.util.toaster
 import kotlinx.coroutines.Dispatchers
@@ -22,15 +24,11 @@ import kotlinx.coroutines.withContext
 import java.util.*
 
 
-class ChatViewModel constructor() : ViewModel() {
-    private val repo = ChatsRepository()
+class ChatViewModel @ViewModelInject constructor(private val repo: ChatsRepository) : ViewModel() {
 
     private val _userData = MutableLiveData<User>()
     val userData: LiveData<User> get() = _userData
 
-    var backStackFromUser = ""
-
-    fun getInstance() = repo.getInstance()
     fun getCurrentUser() = repo.getCurrentUser()
 
 

@@ -20,13 +20,15 @@ import com.haag.superchat.ui.chat.recyclerView.ChatAdapter.OnItemChatClickListen
 import com.haag.superchat.ui.chat.recyclerView.SearchAdapter
 import com.haag.superchat.ui.chat.recyclerView.SearchAdapter.OnItemSearchClickListener
 import com.haag.superchat.util.*
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlin.collections.ArrayList
 
-
+@AndroidEntryPoint
 class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListener {
 
     private val vm: ChatViewModel by viewModels()
+
     var searchList = ArrayList<User>()
     lateinit var sharedPreference: SharedPreferences
     var backStackFromUser = ""
@@ -35,7 +37,6 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        vm.getInstance() // base fragment?
         sharedPreference = context?.getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)!!
     }
 

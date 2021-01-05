@@ -16,10 +16,7 @@ import kotlinx.coroutines.withContext
 
 class LoginViewModel @ViewModelInject constructor(private val repo: LoginRepository) : ViewModel() {
 
-    fun getInstance() = repo.getInstance()
-
     fun signIn(email: String, password: String, view: View) {
-
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 withContext(Dispatchers.Main) {
@@ -31,8 +28,6 @@ class LoginViewModel @ViewModelInject constructor(private val repo: LoginReposit
                 if (authRes.user != null) {
                     navigateTo(view, R.id.action_loginFragment_to_chatFragment)
                 }
-
-
             } catch (e: Exception) {
                 Log.d(",,", "Exception: $e")
 

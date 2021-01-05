@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.SignInMethodQueryResult
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -15,31 +16,25 @@ import com.haag.superchat.model.User
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-class ChatsRepository @Inject constructor() {
-    private lateinit var mAuth: FirebaseAuth
-    val db = Firebase.firestore
+class ChatsRepository @Inject constructor(private val firestore: FirebaseFirestore, private val auth: FirebaseAuth) {
 
-    fun getInstance() {
-        mAuth = FirebaseAuth.getInstance()
-    }
-
-    fun getCurrentUser() = FirebaseAuth.getInstance().currentUser
+    fun getCurrentUser() = auth.currentUser
 
     suspend fun searchUserByEmail(userEmail: String): SignInMethodQueryResult =
-        mAuth.fetchSignInMethodsForEmail(userEmail).await()
+        auth.fetchSignInMethodsForEmail(userEmail).await()
 
     suspend fun getUserId(userEmail: String): DocumentSnapshot =
-        db.collection("userList").document(userEmail).get().await()
+        firestore.collection("userList").document(userEmail).get().await()
 
     suspend fun getUser(userId: String?): DocumentSnapshot =
-        db.collection("users").document(userId.toString()).get().await()
+        firestore.collection("users").document(userId.toString()).get().await()
 
 
     fun getFriendsList(): LiveData<List<User>> {
         var friends = MutableLiveData<List<User>>()
         var users = mutableListOf<User>()
 
-        db.collection("users").document(getCurrentUser()?.uid.toString()).collection("friends")
+        firestore.collection("users").document(getCurrentUser()?.uid.toString()).collection("friends")
             .addSnapshotListener { snapshot, e ->
                 if (e != null) {
                     d(",,", "Listen failed.", e)
@@ -69,13 +64,13 @@ class ChatsRepository @Inject constructor() {
     }
 
     suspend fun addUserToFriendsList(user: User) {
-        db.collection("users").document(getCurrentUser()?.uid.toString())
+        firestore.collection("users").document(getCurrentUser()?.uid.toString())
             .collection("friends")
             .document(user.id).set(user).await()
     }
 
     suspend fun addChatIdToFriend(user: User, chatId: Chat) {
-        db.collection("users").document(getCurrentUser()?.uid.toString())
+        firestore.collection("users").document(getCurrentUser()?.uid.toString())
             .collection("friends")
             .document(user.id).collection("chat").document(chatId.id).set(chatId).await()
     }
@@ -83,7 +78,7 @@ class ChatsRepository @Inject constructor() {
     fun getLastMessage(chatId: String): LiveData<Message> {
         var message = MutableLiveData<Message>()
 
-        db.collection("chats").document(chatId).collection("chat")
+        firestore.collection("chats").document(chatId).collection("chat")
             .addSnapshotListener { snapshot, e ->
                 if (e != null) {
                     d(",,", "Listen failed.", e)
@@ -112,12 +107,12 @@ class ChatsRepository @Inject constructor() {
     }
 
     suspend fun getChatId(userId: String, friend: String): QuerySnapshot =
-        db.collection("users").document(userId)
+        firestore.collection("users").document(userId)
             .collection("friends")
             .document(friend).collection("chat").get().await()
 
 
     fun signOut() {
-        mAuth.signOut()
+        auth.signOut()
     }
 }
