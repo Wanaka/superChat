@@ -13,4 +13,3 @@
 .externalNativeBuild
 .cxx
 *.json
-/app/src/main/java/com/haag/superchat/util/FCMConstants.kt
