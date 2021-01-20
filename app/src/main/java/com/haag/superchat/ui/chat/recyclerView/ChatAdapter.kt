@@ -42,8 +42,8 @@ class ChatAdapter(
 
         holder.bind(
             user,
-            sharedPreference.get("${user.id}+${Constants.SHARED_PREF_BOOLEAN}", false),
-            sharedPreference.get("${user.id}+${Constants.SHARED_PREF_STRING}", "")
+            sharedPreference.get(user.id + Constants.SHARED_PREF_BOOLEAN, false),
+            sharedPreference.get(user.id + Constants.SHARED_PREF_MSG, "")
         )
         holder.itemView.setOnClickListener {
             mListener!!.onItemChatClick(context, user)

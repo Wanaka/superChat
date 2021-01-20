@@ -19,7 +19,7 @@ import com.haag.superchat.R
 import kotlin.random.Random
 
 private const val CHANNEL_ID = "channel"
-private const val CHANNEL_NAME = "channelName"
+private const val CHANNEL_NAME = "SuperChat"
 private const val DESCRIPTION_NAME = "SuperChat Channel"
 private const val USER = "user"
 private const val MESSAGE = "message"
@@ -42,9 +42,11 @@ class FirebaseService : FirebaseMessagingService() {
                 val pendingIntent = PendingIntent.getActivity(this, 0, intent, FLAG_ONE_SHOT)
                 val notification = NotificationCompat.Builder(this, CHANNEL_ID)
                     .setContentText(message.data[MESSAGE])
-                    .setSmallIcon(R.drawable.logo_shape)
+                    .setSmallIcon(R.drawable.ic_chat_bubble)
                     .setAutoCancel(true)
                     .setContentIntent(pendingIntent)
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC) // this parameter is used to configure lock screen visibility
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .build()
 
                 notificationManager.notify(notificationID, notification)

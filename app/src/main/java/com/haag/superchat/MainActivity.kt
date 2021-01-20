@@ -2,9 +2,10 @@ package com.haag.superchat
 
 import android.content.IntentFilter
 import android.net.ConnectivityManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log.d
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.firebase.messaging.FirebaseMessaging
 import com.haag.superchat.ui.chat.ChatViewModel

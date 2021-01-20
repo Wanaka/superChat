@@ -20,6 +20,9 @@ import com.haag.superchat.ui.chat.recyclerView.ChatAdapter.OnItemChatClickListen
 import com.haag.superchat.ui.chat.recyclerView.SearchAdapter
 import com.haag.superchat.ui.chat.recyclerView.SearchAdapter.OnItemSearchClickListener
 import com.haag.superchat.util.*
+import com.haag.superchat.util.Constants.Companion.SHARED_PREF_BOOLEAN
+import com.haag.superchat.util.Constants.Companion.SHARED_PREF_ENTERED
+import com.haag.superchat.util.Constants.Companion.SHARED_PREF_MSG
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlin.collections.ArrayList
@@ -97,79 +100,23 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
         })
     }
 
-    // move logic to VM
     private fun checkForNewMessage(message: Message, friendId: String) {
-        d(",,", "checkForNewMessage")
-        if (friendId == message.userId) {
-            d(",,", "if from friend")
+        if (sharedPreference.getString(friendId + SHARED_PREF_MSG, "") != message.message) {
+            sharedPreference.put(friendId + SHARED_PREF_MSG, message.message)
 
-            if (sharedPreference?.getString(message.userId, "") != message.message) {
-                d(",,", "if message is new")
-
-                if (backStackFromUser == message.userId) {
-                    d(
-                        ",,",
-                        "if backstacked from chat, save it msg: ${message.message}, bool: ${sharedPreference.getBoolean(
-                            Constants.SHARED_PREF_BOOLEAN,
-                            false
-                        )}"
-                    )
-
-//                    if (!sharedPreference.getBoolean(Constants.SHARED_PREF_BOOLEAN, false)) {
-//                        sharedPreference.put(
-//                            "${message.userId}+${Constants.SHARED_PREF_BOOLEAN}",
-//                            true
-//                        )
-//                    } else {
-//                        sharedPreference.put(
-//                            "${message.userId}+${Constants.SHARED_PREF_BOOLEAN}",
-//                            false
-//                        )
-//                    }
-
-                    sharedPreference.put(
-                        "${message.userId}+${Constants.SHARED_PREF_BOOLEAN}",
-                        false
-                    )
-
-                    sharedPreference.put(message.userId, message.message)
-                    backStackFromUser = ""
-
+            if (vm.getCurrentUser()?.uid != message.userId) {
+                if (sharedPreference.getBoolean(friendId + SHARED_PREF_ENTERED, false)) {
+                    sharedPreference.put(friendId + SHARED_PREF_BOOLEAN, false)
+                    sharedPreference.put(friendId + SHARED_PREF_ENTERED, false)
                 } else {
-                    d(",,", "if from friend but not backstacked")
-                    d(
-                        ",,",
-                        "not backstacked, bool: ${sharedPreference.getBoolean(
-                            Constants.SHARED_PREF_BOOLEAN,
-                            true
-                        )}"
-                    )
-                    sharedPreference.put("${message.userId}+${Constants.SHARED_PREF_BOOLEAN}", true)
+                    sharedPreference.put(friendId + SHARED_PREF_BOOLEAN, true)
                 }
             } else {
-                sharedPreference.put("${message.userId}+${Constants.SHARED_PREF_BOOLEAN}", false)
+                sharedPreference.put(friendId + SHARED_PREF_ENTERED, false)
             }
-        } else if (vm.getCurrentUser()?.uid == message.userId) {
-            d(",,", "if I'm the sender, bool false an")
-
-            sharedPreference.put("${friendId}+${Constants.SHARED_PREF_BOOLEAN}", false)
-            sharedPreference.put("${friendId}+${Constants.SHARED_PREF_STRING}", message.message)
-            backStackFromUser = ""
         } else {
-            d(",,", "else statement")
-
-            sharedPreference.put("${friendId}+${Constants.SHARED_PREF_BOOLEAN}", true)
-
+            sharedPreference.put(friendId + SHARED_PREF_ENTERED, false)
         }
-        d(",,", "outside if-statemets")
-
-        if (message.message.isEmpty()) {
-            d(",,", "NO MESSAGE SEND!!!")
-            sharedPreference.put("${friendId}+${Constants.SHARED_PREF_BOOLEAN}", false)
-        }
-
-        //sparar  ord till till RV
-        sharedPreference.put("${friendId}+${Constants.SHARED_PREF_STRING}", message.message)
 
         chatsRv.adapter?.notifyDataSetChanged()
     }
@@ -184,6 +131,7 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
 
     override fun onItemChatClick(context: Context, user: User) {
         vm.navigateTo(requireView(), R.id.action_chatFragment_to_detailChatFragment, user)
+        sharedPreference.put(user.id + SHARED_PREF_ENTERED, true)
     }
 
     private fun latestBackStack() {
@@ -193,7 +141,7 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
             ?.savedStateHandle
             ?.getLiveData<String>(Constants.RESULT)
             ?.observe(viewLifecycleOwner, Observer {
-                backStackFromUser = it
+                sharedPreference.put(it + SHARED_PREF_BOOLEAN, false)
             })
     }
 
