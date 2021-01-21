@@ -132,17 +132,12 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
     override fun onItemChatClick(context: Context, user: User) {
         vm.navigateTo(requireView(), R.id.action_chatFragment_to_detailChatFragment, user)
         sharedPreference.put(user.id + SHARED_PREF_ENTERED, true)
+        sharedPreference.put(user.id + SHARED_PREF_BOOLEAN, false)
+
     }
 
     private fun latestBackStack() {
         storeCurrentFriendChatIdForNotificationsReference("")
-
-        findNavController().currentBackStackEntry
-            ?.savedStateHandle
-            ?.getLiveData<String>(Constants.RESULT)
-            ?.observe(viewLifecycleOwner, Observer {
-                sharedPreference.put(it + SHARED_PREF_BOOLEAN, false)
-            })
     }
 
     private fun storeCurrentFriendChatIdForNotificationsReference(id: String?) {

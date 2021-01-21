@@ -106,8 +106,3 @@ fun Context.showSnack(isConnected: Boolean, view: View) {
     snack.view.setBackgroundColor(color)
     snack.show()
 }
-
-//fun removeLineBreak(){
-//
-//    replace("\n", "")
-//}

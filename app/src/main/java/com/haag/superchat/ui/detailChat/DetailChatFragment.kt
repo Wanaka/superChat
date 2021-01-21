@@ -123,12 +123,6 @@ class DetailChatFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                var result = arguments?.getString(Constants.FRIEND_ID)
-
-                findNavController().previousBackStackEntry
-                    ?.savedStateHandle
-                    ?.set(Constants.RESULT, result)
-
                 findNavController().navigateUp()
                 hideKeyBoard()
             }
