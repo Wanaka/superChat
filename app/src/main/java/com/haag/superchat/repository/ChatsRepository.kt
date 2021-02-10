@@ -3,8 +3,10 @@ package com.haag.superchat.repository
 import android.util.Log.d
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.SignInMethodQueryResult
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -16,7 +18,10 @@ import com.haag.superchat.model.User
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-class ChatsRepository @Inject constructor(private val firestore: FirebaseFirestore, private val auth: FirebaseAuth) {
+class ChatsRepository @Inject constructor(
+    private val firestore: FirebaseFirestore,
+    private val auth: FirebaseAuth
+) {
 
     fun getCurrentUser() = auth.currentUser
 
@@ -30,38 +35,43 @@ class ChatsRepository @Inject constructor(private val firestore: FirebaseFiresto
         firestore.collection("users").document(userId.toString()).get().await()
 
 
-    fun getFriendsList(): LiveData<List<User>> {
-        var friends = MutableLiveData<List<User>>()
-        var users = mutableListOf<User>()
-
-        firestore.collection("users").document(getCurrentUser()?.uid.toString()).collection("friends")
-            .addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    d(",,", "Listen failed.", e)
-                    return@addSnapshotListener
-                }
-
-                if (snapshot != null) {
-                    users.clear()
-
-                    snapshot.documents.forEach {
-                        users.add(
-                            User(
-                                it["userName"].toString(),
-                                it["email"].toString(),
-                                it["id"].toString()
-                            )
-                        )
-                    }
-
-                    friends.value = users
-                } else {
-                    d(",,", "Current data: null")
-                }
-            }
-
-        return friends
+    suspend fun getFriendsList(): QuerySnapshot? {
+        return firestore.collection("users").document(getCurrentUser()?.uid.toString())
+            .collection("friends").get().await()
     }
+
+//    fun getFriendsList(): LiveData<List<User>> {
+//        var friends = MutableLiveData<List<User>>()
+//        var users = mutableListOf<User>()
+//
+//        firestore.collection("users").document(getCurrentUser()?.uid.toString()).collection("friends")
+//            .addSnapshotListener { snapshot, e ->
+//                if (e != null) {
+//                    d(",,", "Listen failed.", e)
+//                    return@addSnapshotListener
+//                }
+//
+//                if (snapshot != null) {
+//                    users.clear()
+//
+//                    snapshot.documents.forEach {
+//                        users.add(
+//                            User(
+//                                it["userName"].toString(),
+//                                it["email"].toString(),
+//                                it["id"].toString()
+//                            )
+//                        )
+//                    }
+//
+//                    friends.value = users
+//                } else {
+//                    d(",,", "Current data: null")
+//                }
+//            }
+//
+//        return friends
+//    }
 
     suspend fun addUserToFriendsList(user: User) {
         firestore.collection("users").document(getCurrentUser()?.uid.toString())

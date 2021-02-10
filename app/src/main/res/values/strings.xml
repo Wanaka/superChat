@@ -20,4 +20,5 @@
     <string name="toast_valid_email_password_needed">You have to enter a valid password, email &amp; a username</string>
     <string name="snack_internet_connected">Connection found</string>
     <string name="snack_internet_not_connected">Internet connection lost</string>
+    <string name="settings">Settings</string>
 </resources>

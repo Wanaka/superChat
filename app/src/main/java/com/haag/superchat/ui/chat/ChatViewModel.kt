@@ -2,7 +2,6 @@ package com.haag.superchat.ui.chat
 
 import android.content.Context
 import android.os.Bundle
-import android.provider.Settings.Global.getString
 import android.util.Log.d
 import android.view.View
 import androidx.hilt.lifecycle.ViewModelInject
@@ -14,14 +13,17 @@ import com.haag.superchat.model.Chat
 import com.haag.superchat.model.Message
 import com.haag.superchat.model.User
 import com.haag.superchat.repository.ChatsRepository
-import com.haag.superchat.repository.LoginRepository
+import com.haag.superchat.sealedClasses.FriendListResponse
 import com.haag.superchat.util.Constants
 import com.haag.superchat.util.toaster
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
+import java.io.IOException
 import java.util.*
+import java.util.Observer
 
 
 class ChatViewModel @ViewModelInject constructor(private val repo: ChatsRepository) : ViewModel() {
@@ -31,10 +33,78 @@ class ChatViewModel @ViewModelInject constructor(private val repo: ChatsReposito
 
     fun getCurrentUser() = repo.getCurrentUser()
 
+//
+//    fun getFriendsList(): LiveData<List<User>> {
+//        return repo.getFriendsList()
+//    }
 
-    fun getFriendsList(): LiveData<List<User>> {
-        return repo.getFriendsList()
+    private val _friendList = MutableLiveData<FriendListResponse>()
+    val friendList: LiveData<FriendListResponse> get() = _friendList
+
+    // sealed classes
+    fun getFriendsList() {
+        val users = mutableListOf<User>()
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = async { repo.getFriendsList() }
+
+                withContext(Dispatchers.Main) {
+                    response.await()?.documents?.forEach { it ->
+                        users.add(
+                            User(
+                                it["userName"].toString(),
+                                it["email"].toString(),
+                                it["id"].toString()
+                            )
+                        )
+
+                        d(",,", "users: ${users}")
+                    }
+                    _friendList.postValue(FriendListResponse.Success(users))
+                }
+
+            } catch (ioe: IOException) {
+                _friendList.postValue(FriendListResponse.Failure("[IO] error please retry", ioe))
+            } catch (he: HttpException) {
+                _friendList.postValue(FriendListResponse.Failure("[HTTP] error please retry", he))
+            }
+        }
     }
+
+
+//    // sealed classes
+//    fun getFriendsList(): LiveData<FriendListResponse> {
+//        val list = MutableLiveData<FriendListResponse>()
+//        val users = mutableListOf<User>()
+//
+//        viewModelScope.launch(Dispatchers.IO) {
+//            try {
+//                val response = async { repo.getFriendsList() }
+//
+//                withContext(Dispatchers.Main) {
+//                    response.await()?.documents?.forEach { it ->
+//                        users.add(
+//                            User(
+//                                it["userName"].toString(),
+//                                it["email"].toString(),
+//                                it["id"].toString()
+//                            )
+//                        )
+//                    }
+//
+//                    list.postValue(FriendListResponse.Success(users))
+//                }
+//
+//            } catch (ioe: IOException) {
+//                list.postValue(FriendListResponse.Failure("[IO] error please retry", ioe))
+//            } catch (he: HttpException) {
+//                list.postValue(FriendListResponse.Failure("[HTTP] error please retry", he))
+//            }
+//        }
+//
+//        return list
+//    }
+
 
     fun searchUserByEmail(userEmail: String, context: Context?) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -88,7 +158,11 @@ class ChatViewModel @ViewModelInject constructor(private val repo: ChatsReposito
                 else -> count++
             }
         }
-        if (count == userList?.size) addUserToFriendsList(user)
+        if (count == userList?.size) {
+            addUserToFriendsList(user)
+            getFriendsList()
+        }
+
     }
 
     private fun addUserToFriendsList(user: User) {
@@ -129,56 +203,19 @@ class ChatViewModel @ViewModelInject constructor(private val repo: ChatsReposito
         return repo.getLastMessage(chatId)
     }
 
-//    fun checkForNewMessage(message: Message, friendId: String, sharedPreference: SharedPreferences){
-//        if (friendId == message.userId) {
-//            if (sharedPreference?.getString(message.userId, "") != message.message) {
-//                if (backStackFromUser == message.userId) {
-//                    sharedPreference.put(
-//                        "${message.userId}+${Constants.SHARED_PREF_BOOLEAN}",
-//                        false
-//                    )
-//                    sharedPreference.put(message.userId, message.message)
-//                    backStackFromUser = ""
-//                } else {
-//                    sharedPreference.put("${message.userId}+${Constants.SHARED_PREF_BOOLEAN}", true)
-//                }
-//            }
-//        } else if (getCurrentUser()?.uid == message.userId) {
-//            sharedPreference.put("${friendId}+${Constants.SHARED_PREF_BOOLEAN}", false)
-//            sharedPreference.put("${friendId}+${Constants.SHARED_PREF_STRING}", message.message)
-//            backStackFromUser = ""
-//        } else {
-//            sharedPreference.put("${friendId}+${Constants.SHARED_PREF_BOOLEAN}", true)
-//
-//        }
-//        sharedPreference.put("${friendId}+${Constants.SHARED_PREF_STRING}", message.message)
-//    }
-
-    fun signOut(view: View) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                repo.signOut()
-
-                withContext(Dispatchers.Main) {
-                    signOutUser(view)
-                }
-            } catch (e: Exception) {
-                d(",,", "Exception: $e")
-            }
-        }
-    }
-
 
     // Navigation
-    private fun signOutUser(view: View) {
-        Navigation.findNavController(view)
-            .navigate(R.id.action_chatFragment_to_createUserLoginFragment)
-    }
-
     fun navigateTo(view: View, fragmentId: Int, user: User) {
         val bundle = Bundle()
         bundle.putString(Constants.FRIEND_ID, user.id)
         bundle.putString(Constants.USER, user.userName)
+        Navigation.findNavController(view)
+            .navigate(fragmentId, bundle)
+    }
+
+    fun navigateToSettings(view: View, fragmentId: Int, userId: String) {
+        val bundle = Bundle()
+        bundle.putString(Constants.USER, userId)
         Navigation.findNavController(view)
             .navigate(fragmentId, bundle)
     }

@@ -9,15 +9,10 @@
         app:actionViewClass="android.widget.SearchView" />
 
     <item
-        android:id="@+id/chatSettings"
-        android:title=""
-        app:actionViewClass="android.widget.SearchView"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/chatSignOut"
+        android:id="@+id/userSettings"
+        android:icon="@drawable/ic_user_icon"
         android:title="Sign Out"
         app:actionViewClass="android.widget.SearchView"
-        app:showAsAction="never" />
+        app:showAsAction="always|collapseActionView" />
 
 </menu>

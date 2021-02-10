@@ -123,6 +123,8 @@ class DetailChatFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
+                Log.d(",,", "BACK CLICK detailchat")
+
                 findNavController().navigateUp()
                 hideKeyBoard()
             }

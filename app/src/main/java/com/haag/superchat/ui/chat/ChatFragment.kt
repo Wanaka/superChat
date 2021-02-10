@@ -9,12 +9,12 @@ import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.haag.superchat.R
 import com.haag.superchat.model.Chat
 import com.haag.superchat.model.Message
 import com.haag.superchat.model.User
+import com.haag.superchat.sealedClasses.FriendListResponse
 import com.haag.superchat.ui.chat.recyclerView.ChatAdapter
 import com.haag.superchat.ui.chat.recyclerView.ChatAdapter.OnItemChatClickListener
 import com.haag.superchat.ui.chat.recyclerView.SearchAdapter
@@ -34,7 +34,6 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
 
     var searchList = ArrayList<User>()
     lateinit var sharedPreference: SharedPreferences
-    var backStackFromUser = ""
     private var userList: List<User>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,16 +58,24 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        vm.getFriendsList().observe(viewLifecycleOwner, Observer { it ->
-            userList = it
-            initChatRv(it)
-            it.forEach { getChat(it.id) }
+        vm.friendList.observe(viewLifecycleOwner, Observer { result ->
+            d(",,", "observing friendlist")
+            when (result) {
+                is FriendListResponse.Success -> {
+                    userList = result.list
+                    initChatRv(result.list)
+                    result.list.forEach { getChat(it.id) }
+                }
+
+                is FriendListResponse.Failure -> d(",,", result.message ?: "Unknown error message")
+            }
         })
 
         vm.userData.observe(viewLifecycleOwner, Observer {
             initSearchRv(it)
         })
 
+        vm.getFriendsList()
         latestBackStack()
     }
 
@@ -133,7 +140,6 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
         vm.navigateTo(requireView(), R.id.action_chatFragment_to_detailChatFragment, user)
         sharedPreference.put(user.id + SHARED_PREF_ENTERED, true)
         sharedPreference.put(user.id + SHARED_PREF_BOOLEAN, false)
-
     }
 
     private fun latestBackStack() {
@@ -144,19 +150,23 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
         sharedPreference.put("currentChatUserId", id)
     }
 
+
     // ---- Menu ---- //
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.chat_menu, menu)
 
-        var item = menu.findItem(R.id.chatSearch)
-        var searchView: SearchView? = item.actionView as? SearchView
+        var itemChatSearch = menu.findItem(R.id.chatSearch)
+        var itemSettings = menu.findItem(R.id.userSettings)
+
+        var searchView: SearchView? = itemChatSearch.actionView as? SearchView
 
         searchView?.isFocusable = true
         searchView?.isIconified = false
 
 
-        item.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+        itemChatSearch.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                itemSettings.isVisible = false
                 searchRv.visibility = View.VISIBLE
                 chatsRv.visibility = View.GONE
                 searchList.clear()
@@ -166,6 +176,7 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
             }
 
             override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                itemSettings.isVisible = true
                 searchRv.visibility = View.GONE
                 chatsRv.visibility = View.VISIBLE
                 searchView?.setQuery("", false)
@@ -198,8 +209,11 @@ class ChatFragment : Fragment(), OnItemSearchClickListener, OnItemChatClickListe
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.chatSignOut -> {
-                vm.signOut(requireView())
+            R.id.userSettings -> {
+                vm.navigateToSettings(
+                    requireView(), R.id.action_chatFragment_to_settingsFragment,
+                    vm.getCurrentUser()?.uid.toString()
+                )
             }
         }
 
