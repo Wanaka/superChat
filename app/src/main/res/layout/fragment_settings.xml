@@ -24,7 +24,7 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_marginTop="80dp"
-            android:background="@mipmap/ic_launcher"
+            android:background="@drawable/placeholder_img_android"
             android:foreground="@drawable/rounded_corner_img"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"

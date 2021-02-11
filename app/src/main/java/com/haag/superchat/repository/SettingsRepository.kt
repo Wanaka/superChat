@@ -5,6 +5,7 @@ import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.haag.superchat.util.randomUUID
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -22,4 +23,7 @@ class SettingsRepository @Inject constructor(
             storage.reference.child("images/${getCurrentUser()?.uid.toString()}").putFile(it)
         }
     }
+
+    fun getMyProfilePicture(): StorageReference =
+        storage.getReferenceFromUrl("gs://superchat-e515a.appspot.com/images/${getCurrentUser()?.uid.toString()}")
 }

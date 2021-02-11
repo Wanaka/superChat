@@ -8,6 +8,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.Navigation
+import com.google.firebase.storage.StorageReference
 import com.haag.superchat.R
 import com.haag.superchat.repository.SettingsRepository
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +21,10 @@ class SettingsViewModel @ViewModelInject constructor(private val repo: SettingsR
     fun uploadImageToFirebaseStorage(img: Uri, context: Context?) {
         repo.uploadImageToFirebaseStorage(img)
     }
+
+    fun getImg(): StorageReference  =
+        repo.getMyProfilePicture()
+
 
 //    fun getCurrentUser() = repo.getCurrentUser()
 //

@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
@@ -51,6 +52,12 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        vm.getImg().downloadUrl
+            .addOnSuccessListener { uri ->
+                updateImageView(uri)
+            }
+
         userImg.setOnClickListener {
             Intent(Intent.ACTION_GET_CONTENT).also {
                 it.type = "image/*"
@@ -59,6 +66,12 @@ class SettingsFragment : Fragment() {
         }
     }
 
+    private fun updateImageView(uri: Uri?) {
+        Glide.with(this)
+            .load(uri)
+            .centerCrop()
+            .into(userImg)
+    }
 
     private fun uploadImageToFirebaseStorage(img: Uri) {
         vm.uploadImageToFirebaseStorage(img, context)
@@ -68,19 +81,12 @@ class SettingsFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == 0) {
             data?.data?.let {
-                userImg.setImageURI(it)
+                updateImageView(it)
                 uploadImageToFirebaseStorage(it)
             }
         }
     }
 
-
-    //Glide
-    //            .with(view)
-    //            .load(region(h.region))
-    //            .centerCrop()
-    //            .placeholder(R.drawable.ic_launcher_background)
-    //            .into(img)
 
     // Menu
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
