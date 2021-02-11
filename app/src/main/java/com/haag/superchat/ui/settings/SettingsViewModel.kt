@@ -1,34 +1,43 @@
 package com.haag.superchat.ui.settings
 
-import android.util.Log
+import android.content.Context
+import android.net.Uri
 import android.view.View
+import android.widget.Toast
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.Navigation
 import com.haag.superchat.R
-import com.haag.superchat.repository.ChatsRepository
+import com.haag.superchat.repository.SettingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SettingsViewModel @ViewModelInject constructor(private val repo: ChatsRepository) : ViewModel() {
+class SettingsViewModel @ViewModelInject constructor(private val repo: SettingsRepository) :
+    ViewModel() {
 
-    fun getCurrentUser() = repo.getCurrentUser()
-
-    fun signOut(view: View) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                repo.signOut()
-
-                withContext(Dispatchers.Main) {
-                    signOutUser(view)
-                }
-            } catch (e: Exception) {
-                Log.d(",,", "Exception: $e")
-            }
-        }
+    fun uploadImageToFirebaseStorage(img: Uri, context: Context?) {
+        repo.uploadImageToFirebaseStorage(img)
     }
+
+//    fun getCurrentUser() = repo.getCurrentUser()
+//
+//    fun signOut(view: View) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            try {
+//                repo.signOut()
+//
+//                withContext(Dispatchers.Main) {
+//                    signOutUser(view)
+//                }
+//            } catch (e: Exception) {
+//                d(",,", "Exception: $e")
+//            }
+//        }
+//    }
+
+
 
     // Navigation
     private fun signOutUser(view: View) {

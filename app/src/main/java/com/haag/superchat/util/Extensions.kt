@@ -17,6 +17,7 @@ import com.haag.superchat.model.Message
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 
 fun Fragment.hideKeyBoard() {
@@ -28,6 +29,10 @@ fun Fragment.showKeyBoard() {
     val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.toggleSoftInputFromWindow(requireView().windowToken, InputMethodManager.SHOW_FORCED, 0)
 
+}
+
+fun randomUUID(): UUID? {
+    return UUID.randomUUID()
 }
 
 fun messageNumber(number: Int): String {
