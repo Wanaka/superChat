@@ -24,6 +24,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "API_KEY", localProperties['API_KEY']
+        buildConfigField "String", "IMAGE_KEY", localProperties['IMAGE_KEY']
     }
 
     buildTypes {

@@ -36,12 +36,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Kurt van Burt"
+            android:textColor="@color/black"
             android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/userImg"
-            app:layout_constraintStart_toStartOf="@+id/userImg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/userImg" />
+
+        <EditText
+            android:id="@+id/editUserNameTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="textPersonName"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/userImg"
+            tools:visibility="visible" />
 
         <Button
             android:id="@+id/signOutButton"
@@ -56,6 +72,21 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/updateUserNameBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/green_light"
+            android:text="Update"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="@+id/editUserNameTxt"
+            app:layout_constraintHorizontal_bias="0.491"
+            app:layout_constraintStart_toStartOf="@+id/editUserNameTxt"
+            app:layout_constraintTop_toBottomOf="@+id/editUserNameTxt"
+            tools:visibility = "visible"
+            android:visibility = "gone"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

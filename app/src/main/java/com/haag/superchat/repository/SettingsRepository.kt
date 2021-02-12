@@ -1,12 +1,12 @@
 package com.haag.superchat.repository
 
-import android.content.Context
 import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.haag.superchat.util.randomUUID
+import com.haag.superchat.BuildConfig
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -25,5 +25,17 @@ class SettingsRepository @Inject constructor(
     }
 
     fun getMyProfilePicture(): StorageReference =
-        storage.getReferenceFromUrl("gs://superchat-e515a.appspot.com/images/${getCurrentUser()?.uid.toString()}")
+        storage.getReferenceFromUrl("${BuildConfig.IMAGE_KEY}${getCurrentUser()?.uid.toString()}")
+
+    suspend fun updateUserName(userName: String) {
+        firestore.collection("users").document(getCurrentUser()?.uid.toString())
+            .update("userName", userName).await()
+    }
+
+    suspend fun getUser(): DocumentSnapshot =
+        firestore.collection("users").document(getCurrentUser()?.uid.toString()).get().await()
+
+    fun signOut() {
+        auth.signOut()
+    }
 }

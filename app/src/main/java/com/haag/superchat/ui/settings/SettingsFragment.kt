@@ -3,30 +3,24 @@ package com.haag.superchat.ui.settings
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.opengl.Visibility
 import android.os.Bundle
-import android.provider.MediaStore
-import android.util.Log.d
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
+
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ktx.storage
 import com.haag.superchat.R
+import com.haag.superchat.util.displayProfilePicture
+import com.haag.superchat.util.hideKeyBoard
 import com.haag.superchat.util.setupActionToolBar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_create_user_login.*
 import kotlinx.android.synthetic.main.fragment_settings.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class SettingsFragment : Fragment() {
@@ -53,9 +47,13 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        vm.getUser().observe(viewLifecycleOwner, Observer {
+            userNameTxt.text = it.userName
+        })
+
         vm.getImg().downloadUrl
             .addOnSuccessListener { uri ->
-                updateImageView(uri)
+                displayProfilePicture(requireContext(), uri, userImg)
             }
 
         userImg.setOnClickListener {
@@ -64,25 +62,52 @@ class SettingsFragment : Fragment() {
                 startActivityForResult(it, 0)
             }
         }
-    }
 
-    private fun updateImageView(uri: Uri?) {
-        Glide.with(this)
-            .load(uri)
-            .centerCrop()
-            .into(userImg)
-    }
+        userNameTxt.setOnClickListener {
+            userNameIsBeingEdited(true)
+        }
 
-    private fun uploadImageToFirebaseStorage(img: Uri) {
-        vm.uploadImageToFirebaseStorage(img, context)
+        updateUserNameBtn.setOnClickListener {
+            userNameIsBeingEdited(false)
+        }
+
+        signOutButton.setOnClickListener {
+            vm.signOut(view)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == 0) {
             data?.data?.let {
-                updateImageView(it)
+                displayProfilePicture(requireContext(), it, userImg)
                 uploadImageToFirebaseStorage(it)
+            }
+        }
+    }
+
+    private fun uploadImageToFirebaseStorage(img: Uri) {
+        vm.uploadImageToFirebaseStorage(img, context)
+    }
+
+    private fun userNameIsBeingEdited(bool: Boolean) {
+        when (bool) {
+            true -> {
+
+                editUserNameTxt.post {
+                    editUserNameTxt.setText(userNameTxt.text)
+                }
+                userNameTxt.visibility = View.GONE
+                editUserNameTxt.visibility = View.VISIBLE
+                updateUserNameBtn.visibility = View.VISIBLE
+            }
+            false -> {
+                hideKeyBoard()
+                userNameTxt.text = editUserNameTxt.text
+                userNameTxt.visibility = View.VISIBLE
+                editUserNameTxt.visibility = View.GONE
+                updateUserNameBtn.visibility = View.GONE
+                vm.updateUserName(editUserNameTxt.text.toString())
             }
         }
     }

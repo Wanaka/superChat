@@ -1,23 +1,22 @@
 package com.haag.superchat.util
 
 import android.content.Context
-import android.text.TextUtils.replace
-import android.util.Log.d
+import android.net.Uri
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.haag.superchat.MainActivity
 import com.haag.superchat.R
-import com.haag.superchat.model.Message
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 
 fun Fragment.hideKeyBoard() {
@@ -31,8 +30,11 @@ fun Fragment.showKeyBoard() {
 
 }
 
-fun randomUUID(): UUID? {
-    return UUID.randomUUID()
+fun displayProfilePicture(context: Context, uri: Uri, imageView: ImageView) {
+    Glide.with(context)
+        .load(uri)
+        .centerCrop()
+        .into(imageView)
 }
 
 fun messageNumber(number: Int): String {

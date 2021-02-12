@@ -22,9 +22,6 @@
         android:label="fragment_chat"
         tools:layout="@layout/fragment_chat" >
         <action
-            android:id="@+id/action_chatFragment_to_createUserLoginFragment"
-            app:destination="@id/createUserLoginFragment" />
-        <action
             android:id="@+id/action_chatFragment_to_detailChatFragment"
             app:destination="@id/detailChatFragment" />
         <action
@@ -61,5 +58,9 @@
         android:id="@+id/settingsFragment"
         android:name="com.haag.superchat.ui.settings.SettingsFragment"
         android:label="fragment_settings"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_settingsFragment_to_createUserLoginFragment"
+            app:destination="@id/createUserLoginFragment" />
+    </fragment>
 </navigation>

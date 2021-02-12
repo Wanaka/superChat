@@ -120,9 +120,4 @@ class ChatsRepository @Inject constructor(
         firestore.collection("users").document(userId)
             .collection("friends")
             .document(friend).collection("chat").get().await()
-
-
-    fun signOut() {
-        auth.signOut()
-    }
 }
