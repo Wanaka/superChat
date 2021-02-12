@@ -32,18 +32,11 @@ class ChatViewModel @ViewModelInject constructor(private val repo: ChatsReposito
     private val _userData = MutableLiveData<User>()
     val userData: LiveData<User> get() = _userData
 
-    fun getCurrentUser() = repo.getCurrentUser()
-
-//
-//    fun getFriendsList(): LiveData<List<User>> {
-//        return repo.getFriendsList()
-//    }
-
     private val _friendList = MutableLiveData<FriendListResponse>()
     val friendList: LiveData<FriendListResponse> get() = _friendList
 
+    fun getCurrentUser() = repo.getCurrentUser()
 
-    // sealed classes
     fun getFriendsList() {
         val users = mutableListOf<User>()
         viewModelScope.launch(Dispatchers.IO) {
@@ -65,21 +58,7 @@ class ChatViewModel @ViewModelInject constructor(private val repo: ChatsReposito
                         )
                     )
                 }
-//                withContext(Dispatchers.Main) {
-//                    response.await()?.documents?.forEach { it ->
-//                        users.add(
-//                            User(
-//                                it["userName"].toString(),
-//                                it["email"].toString(),
-//                                it["id"].toString()
-//                            )
-//                        )
-//
-//                        d(",,", "users: ${users}")
-//                    }
-                    _friendList.postValue(FriendListResponse.Success(users))
-//                }
-
+                _friendList.postValue(FriendListResponse.Success(users))
             } catch (ioe: IOException) {
                 _friendList.postValue(FriendListResponse.Failure("[IO] error please retry", ioe))
             } catch (he: HttpException) {
@@ -87,38 +66,6 @@ class ChatViewModel @ViewModelInject constructor(private val repo: ChatsReposito
             }
         }
     }
-
-
-//    // sealed classes
-//    fun getFriendsList() {
-//        val users = mutableListOf<User>()
-//        viewModelScope.launch(Dispatchers.IO) {
-//            try {
-//                val response = async { repo.getFriendsList() }
-//
-//                withContext(Dispatchers.Main) {
-//                    response.await()?.documents?.forEach { it ->
-//                        users.add(
-//                            User(
-//                                it["userName"].toString(),
-//                                it["email"].toString(),
-//                                it["id"].toString()
-//                            )
-//                        )
-//
-//                        d(",,", "users: ${users}")
-//                    }
-//                    _friendList.postValue(FriendListResponse.Success(users))
-//                }
-//
-//            } catch (ioe: IOException) {
-//                _friendList.postValue(FriendListResponse.Failure("[IO] error please retry", ioe))
-//            } catch (he: HttpException) {
-//                _friendList.postValue(FriendListResponse.Failure("[HTTP] error please retry", he))
-//            }
-//        }
-//    }
-
 
 //    // sealed classes
 //    fun getFriendsList(): LiveData<FriendListResponse> {

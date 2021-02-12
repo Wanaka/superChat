@@ -5,7 +5,6 @@ import android.net.Uri
 import android.util.Log
 import android.util.Log.d
 import android.view.View
-import android.widget.Toast
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,13 +13,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.Navigation
 import com.google.firebase.storage.StorageReference
 import com.haag.superchat.R
-import com.haag.superchat.model.Chat
 import com.haag.superchat.model.User
 import com.haag.superchat.repository.SettingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
 
 class SettingsViewModel @ViewModelInject constructor(private val repo: SettingsRepository) :
     ViewModel() {
